@@ -1,0 +1,8 @@
+CREATE TABLE TEST (
+    id int PRIMARY KEY 
+);
+
+INSERT INTO TEST(id) VALUES
+(1),(2);
+
+SELECT * from TEST
