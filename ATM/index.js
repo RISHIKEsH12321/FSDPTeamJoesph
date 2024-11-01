@@ -9,6 +9,13 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3000;
 
+//Rishikesh's Controllers
+const user = require("./controller/User_Controller");
+const account = require("./controller/Accounts_Controller");
+const bankTransaction = require("./controller/Bank_Transactions_Controller");
+const nonATMTransaction = require("./controller/Non_ATM_Transactions_Controller");
+
+
 app.use("/",express.static("public")); //Static Files start from public 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -47,6 +54,15 @@ app.get("/testPage", async (req, res) => {
         // Close the database connection
         sql.close();
     }
+});
+
+app.get("/userDetails/:userId", user.getUserById);
+app.get("/accountDetails/:userId", account.getAccountsByUserId);
+app.get("/bankTrans/:userId", bankTransaction.getBankTransactionsByUserId);
+app.get("/personalTrans/:userId", nonATMTransaction.getNonATMTransactionsByUserId);
+
+app.get("/graph1", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));
 });
 
 app.listen(port, async () => {
