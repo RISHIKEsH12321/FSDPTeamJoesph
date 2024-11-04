@@ -1,0 +1,40 @@
+.btn.btn-secondary{
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 20px 0;
+    font-size: 1.2em;
+}
+.btn.btn-light{
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 20px 0;
+    font-size: 1.2em;
+}
+
+#tutorial{
+    cursor: pointer;
+}
+
+#exit{
+    cursor: pointer;
+}
+
+#wHint{
+    position: absolute;
+    top: 50%;
+    left: 45%;
+}
+
+#dHint{
+    position: absolute;
+    top: 35%;
+    left: 45%;
+}
+
+#tHint{
+    position: absolute;
+    top: 50%;
+    left: 55%;
+}
