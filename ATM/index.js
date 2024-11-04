@@ -49,6 +49,32 @@ app.get("/testPage", async (req, res) => {
     }
 });
 
+app.get("/print", async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, "public", "html", "login(fingerprint).html");
+        res.sendFile(filePath);
+    } catch (err) {
+        console.error("Error executing query:", err);
+        res.status(500).send("Internal Server Error");
+    } finally {
+        // Close the database connection
+        sql.close();
+    }
+});
+
+app.get("/face", async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, "public", "html", "login(facial).html");
+        res.sendFile(filePath);
+    } catch (err) {
+        console.error("Error executing query:", err);
+        res.status(500).send("Internal Server Error");
+    } finally {
+        // Close the database connection
+        sql.close();
+    }
+});
+
 app.listen(port, async () => {
     try {
         // Connect to the database
