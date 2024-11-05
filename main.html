@@ -1,0 +1,39 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+
+
+    <button id="helpButton" onclick="showHelp()">Need Help?</button>
+
+    <div id="test">
+        <img src="OCBC_logo.png" alt="OCBC logo" class="Logo">
+    </div>
+
+
+    <div id="helpOptions" class="popup">
+        <span class="close" onclick="toggleHelp()">&times;</span>
+        <p>How can we assist you today?</p>
+        <div class="options">
+            <button onclick="showDescription('cardRetained')">Card Retained</button>
+            <button onclick="showDescription('transactionFailed')">Transaction Failed</button>
+            <button onclick="showDescription('accountBalance')">Account Balance Issue</button>
+            <button onclick="showDescription('incorrectPIN')">Incorrect PIN</button>
+            <button onclick="showDescription('technicalError')">Technical Error</button>
+            <button onclick="showDescription('cashNotDispensed')">Cash Not Dispensed</button>
+            <button class="emergency" onclick="showDescription('emergency')">Emergency Assistance</button>
+        </div>
+    </div>
+
+
+    <div id="detailedInfo" class="detailed-info" style="display: none;">
+        <h2 id="infoTitle"></h2>
+        <p id="infoContent"></p>
+        <button onclick="hideDetails()">Close</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
