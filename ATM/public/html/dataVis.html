@@ -7,16 +7,35 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <script src="../js/dataVis.js" defer></script>
+    <link rel="stylesheet" href="../css/dataVis.css">
     <style>
-        #myChart {
-            width: 80vw;
-            margin: auto;
-        }
+
     </style>
 </head>
 <body>
-    <h1>Monthly Transactions for 2024</h1>
-    <canvas id="myChart"></canvas>
+    <h1>Transactions for 2024</h1>
+
+    <div id="cardContainer">
+        <div class="chart-card" onclick="toggleChart('chart1')">
+            <canvas id="chart1" class="chart"></canvas>
+        </div>
+        <div class="chart-card" onclick="toggleChart('chart2')">
+            <canvas id="chart2" class="chart"></canvas>
+        </div>
+        <div class="chart-card" onclick="toggleChart('chart3')">
+            <canvas id="chart3" class="chart"></canvas>
+        </div>
+        <div class="chart-card" onclick="toggleChart('chart4')">
+            <canvas id="chart4" class="chart"></canvas>
+        </div>
+        <div class="chart-card" onclick="toggleChart('chart5')">
+            <canvas id="chart5" class="chart"></canvas>
+        </div>        
+        <div class="chart-card" onclick="toggleChart('chart6')">
+            <canvas id="chart6" class="chart"></canvas>
+        </div>        
+    </div>
+
 
 </body>
 </html>

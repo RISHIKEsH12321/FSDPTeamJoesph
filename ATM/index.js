@@ -14,6 +14,8 @@ const user = require("./controller/User_Controller");
 const account = require("./controller/Accounts_Controller");
 const bankTransaction = require("./controller/Bank_Transactions_Controller");
 const nonATMTransaction = require("./controller/Non_ATM_Transactions_Controller");
+const atmTypes = require("./controller/ATM_Transaction_Type_Controller");
+const nonAtmTypes = require("./controller/Non_ATM_Transaction_Type_Controller");
 
 
 app.use("/",express.static("public")); //Static Files start from public 
@@ -55,6 +57,9 @@ app.get("/testPage", async (req, res) => {
         sql.close();
     }
 });
+
+app.get("/atmTypes", atmTypes.getATMTransactionTypes);
+app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);
 
 app.get("/userDetails/:userId", user.getUserById);
 app.get("/accountDetails/:userId", account.getAccountsByUserId);
