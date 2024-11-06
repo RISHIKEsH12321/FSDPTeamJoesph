@@ -6,6 +6,11 @@
     <title>ASD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
     <script src="../js/dataVis.js" defer></script>
     <link rel="stylesheet" href="../css/dataVis.css">
     <style>
@@ -35,6 +40,9 @@
             <canvas id="chart6" class="chart"></canvas>
         </div>        
     </div>
+    <button onclick="generateFinancialReportPDF()">Generate Financial Report</button>
+    <div id="qrCode"></div> <!-- This div will contain the QR code for download link -->
+
 
 
 </body>

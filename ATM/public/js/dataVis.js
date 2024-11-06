@@ -289,7 +289,7 @@ function createMostCommonTransactionDaysChart(transactions) {
     });
 }
 
-async function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap) {
+function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap) {
     const monthlyBalances = {};  // To store the account balance for each month
     const months = [];           // To store the months for the x-axis (e.g., January, February)
     const balances = [];         // To store the corresponding balance values
@@ -385,6 +385,92 @@ async function generateBankAccountBalanceGraph(bankTransactions, nonATMTransacti
         }
     });
 }
+
+async function generateFinancialReportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    const pageHeight = doc.internal.pageSize.height;
+    let yOffset = 10; // Starting position
+
+    // Set Title and Hardcoded Financial Status
+    doc.setFontSize(16);
+    doc.text("Financial Summary Report", 10, yOffset);
+    yOffset += 10;
+    
+    doc.setFontSize(12);
+    doc.text("Your current financial status is as follows:", 10, yOffset);
+    yOffset += 10;
+    doc.text("Status: Stable with consistent spending and income flow. Continue budgeting carefully.", 10, yOffset);
+    yOffset += 20;
+
+    // Capture Chart Images
+    const charts = ['chart1', 'chart2', 'chart3', 'chart4', 'chart5', 'chart6']; // ID of chart canvases
+    
+    for (const chartId of charts) {
+        const chart = document.getElementById(chartId);
+        if (chart) {
+            const canvas = await html2canvas(chart);
+            const imgData = canvas.toDataURL("image/png");
+
+            // Add image and check for overflow
+            if (yOffset + 100 > pageHeight) { 
+                doc.addPage();
+                yOffset = 10;
+            }
+            doc.addImage(imgData, 'PNG', 10, yOffset, 180, 100);
+            yOffset += 110; // Space for the next chart
+        }
+    }
+
+    // Add Data Table
+    const sampleData = [
+        { category: "Income", amount: 5000 },
+        { category: "Shopping", amount: 1200 },
+        { category: "Medical", amount: 300 },
+        { category: "Entertainment", amount: 800 },
+        // Add more data as needed
+    ];
+    if (yOffset + 20 > pageHeight) { 
+        doc.addPage();
+        yOffset = 10;
+    }
+    doc.text("Detailed Financial Data:", 10, yOffset);
+    yOffset += 10;
+
+    sampleData.forEach((data, index) => {
+        if (yOffset + 10 > pageHeight) { 
+            doc.addPage();
+            yOffset = 10;
+        }
+        doc.text(`${data.category}: $${data.amount}`, 10, yOffset);
+        yOffset += 10;
+    });
+
+    // Save PDF and Generate QR Code for Download
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Generate QR Code for PDF download
+    const qrContainer = document.getElementById("qrCode");
+    qrContainer.innerHTML = ""; // Clear previous QR code if any
+    new QRCode(qrContainer, {
+        text: pdfUrl,
+        width: 128,
+        height: 128,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Create Download Button
+    const downloadButton = document.createElement("a");
+    downloadButton.href = pdfUrl;
+    downloadButton.download = "Financial_Summary_Report.pdf";
+    downloadButton.textContent = "Download Financial Report";
+    document.body.appendChild(downloadButton); // Adjust as needed
+}
+
 
 
 
