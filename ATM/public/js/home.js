@@ -62,3 +62,7 @@ function showMoreService() {
 function gotoFundsTransfer(){
     window.location.href="transferFunds.html";
 }
+
+function gotoDeposit(){
+    window.location.href="deposit.html";
+}
