@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASD</title>
+
+    <!-- For the chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
+    <!-- For the pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- ZIP File -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
 
     <script src="../js/dataVis.js" defer></script>
@@ -19,31 +25,61 @@
 </head>
 <body>
     <h1>Transactions for 2024</h1>
-
+    
     <div id="cardContainer">
-        <div class="chart-card" onclick="toggleChart('chart1')">
-            <canvas id="chart1" class="chart"></canvas>
+        <div class="chart-card" onclick="toggleChart('chart1Container')">
+            <p>Personal Transactions</p>
+            <div id="chart1Container" class="chart-container hidden">
+                <canvas id="chart1" class="chart"></canvas>
+            </div>            
         </div>
-        <div class="chart-card" onclick="toggleChart('chart2')">
-            <canvas id="chart2" class="chart"></canvas>
+
+        <div class="chart-card" onclick="toggleChart('chart2Container')">
+            <p>Spending Categories</p>
+            <div id="chart2Container" class="chart-container hidden">
+                <canvas id="chart2" class="chart"></canvas>
+            </div>            
         </div>
-        <div class="chart-card" onclick="toggleChart('chart3')">
-            <canvas id="chart3" class="chart"></canvas>
+        
+        <div class="chart-card" onclick="toggleChart('chart3Container')">
+            <p>Amount Spent In Categories</p>
+            <div id="chart3Container" class="chart-container hidden">
+                <canvas id="chart3" class="chart"></canvas>
+            </div>            
         </div>
-        <div class="chart-card" onclick="toggleChart('chart4')">
-            <canvas id="chart4" class="chart"></canvas>
+        
+        <div class="chart-card" onclick="toggleChart('chart4Container')">
+            <p>Income vs Expenses</p>
+            <div id="chart4Container" class="chart-container hidden">
+                <canvas id="chart4" class="chart"></canvas>
+            </div>            
         </div>
-        <div class="chart-card" onclick="toggleChart('chart5')">
-            <canvas id="chart5" class="chart"></canvas>
-        </div>        
-        <div class="chart-card" onclick="toggleChart('chart6')">
-            <canvas id="chart6" class="chart"></canvas>
+        
+        <div class="chart-card" onclick="toggleChart('chart5Container')">
+            <p>Common Transaction Dates</p>
+            <div id="chart5Container" class="chart-container hidden">
+                <canvas id="chart5" class="chart"></canvas>
+            </div>            
+        </div>
+        
+        <div class="chart-card" onclick="toggleChart('chart6Container')">
+            <p>Balance</p>
+            <div id="chart6Container" class="chart-container hidden">
+                <canvas id="chart6" class="chart"></canvas>
+            </div>            
         </div>        
     </div>
-    <button onclick="generateFinancialReportPDF()">Generate Financial Report</button>
-    <div id="qrCode"></div> <!-- This div will contain the QR code for download link -->
 
+    <div id="duplicate-container">
+        <canvas id="duplicate-chart1" class="chart"></canvas>
+        <canvas id="duplicate-chart2" class="chart"></canvas>
+        <canvas id="duplicate-chart3" class="chart"></canvas>
+        <canvas id="duplicate-chart4" class="chart"></canvas>
+        <canvas id="duplicate-chart5" class="chart"></canvas>
+        <canvas id="duplicate-chart6" class="chart"></canvas>        
+    </div>
 
-
+    <button id="reportBtn" onclick="generateFinancialReportPDF()">Generate Financial Report</button>
+    
 </body>
 </html>

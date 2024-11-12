@@ -18,9 +18,10 @@ CREATE TABLE Users (
 
 CREATE TABLE Account (
     UserID INT,
-    AccountID INT PRIMARY KEY Identity(1, 1),
+    AccountID INT PRIMARY KEY IDENTITY(1, 1),
     Account_Number CHAR(16) UNIQUE,
     Account_PIN VARCHAR(64),  -- Use a hashed PIN for security
+    Email VARCHAR(255),       -- Add the Email column with a suitable length
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
@@ -44,10 +45,6 @@ CREATE TABLE Non_ATM_Transaction_Type (
     TypeID INT PRIMARY KEY IDENTITY(1, 1),
     TypeName VARCHAR(50) UNIQUE  -- Example types: 'Shopping', 'Medical', 'Entertainment'
 );
-
--- Example Insert Statements
---INSERT INTO Non_ATM_Transaction_Type (TypeName) VALUES
---('Shopping'), ('Medical'), ('Entertainment'), ('Bills'), ('Others');
 
 CREATE TABLE Organization (
     OrganizationID INT PRIMARY KEY IDENTITY(1, 1),
@@ -75,9 +72,9 @@ INSERT INTO Users (Date_Joined, Phone_Number, NRIC) VALUES
 ('2023-01-15', '12345678', 'S1234567A'),
 ('2023-03-20', '87654321', 'S7654321B');
 
-INSERT INTO Account (UserID, Account_Number, Account_PIN) VALUES
-(1, '1234567890123456', 'hashed_pin_1'), 
-(2, '6543210987654321', 'hashed_pin_2');
+INSERT INTO Account (UserID, Account_Number, Account_PIN, Email) VALUES
+(1, '1234567890123456', 'hashed_pin_1', 'rishi070606@gmail.com'), 
+(2, '6543210987654321', 'hashed_pin_2', 'rishi070606@gmail.com');
 
 INSERT INTO ATM_Transaction_Type (TypeName) VALUES
 ('Withdrawal'), ('Deposit'), ('Transfer');

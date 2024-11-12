@@ -5,9 +5,14 @@ const bodyParser = require("body-parser");
 const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const path = require("path");
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+
 
 //Rishikesh's Controllers
 const user = require("./controller/User_Controller");
@@ -68,6 +73,82 @@ app.get("/personalTrans/:userId", nonATMTransaction.getNonATMTransactionsByUserI
 
 app.get("/graph1", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));
+});
+
+app.post('/send-pdf/', async (req, res) => {
+    const { email, pdfData } = req.body;
+    console.log("Sending Email ZIP...");
+    // Configure the transporter with your email service credentials (use App Password here)
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'j32740728@gmail.com',
+            pass: 'dfqc tper yvdm klrt'  // Replace with the App Password
+        }
+    });
+    //dfqc tper yvdm klrt
+
+    // Create the email with the PDF attached
+    const mailOptions = {
+        from: 'j32740728@gmail.com',
+        to: email,
+        subject: 'Your Financial Summary Report',
+        text: 'Please find attached your Financial Summary Report.',
+        attachments: [
+            {
+                filename: 'Financial_Summary_Report.pdf',
+                content: Buffer.from(pdfData, 'base64'),
+                contentType: 'application/pdf'
+            }
+        ]
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+        res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ error: 'Failed to send email' });
+    }
+});
+
+app.post('/send-zip/', async (req, res) => {
+    const { email, zipData } = req.body;
+    console.log("Sending Email...");
+
+    // Configure the transporter with your email service credentials (use App Password here)
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'j32740728@gmail.com',
+            pass: 'dfqc tper yvdm klrt'  // Replace with the App Password
+        }
+    });
+
+    // Create the email with the ZIP file attached
+    const mailOptions = {
+        from: 'j32740728@gmail.com',
+        to: email,
+        subject: 'Your Financial Summary Report',
+        text: 'Please find attached your Financial Summary Report in ZIP format.',
+        attachments: [
+            {
+                filename: 'Financial_Summary_Report.zip',
+                content: Buffer.from(zipData, 'base64'),
+                contentType: 'application/zip'
+            }
+        ]
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+        res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ error: 'Failed to send email' });
+    }
 });
 
 app.listen(port, async () => {

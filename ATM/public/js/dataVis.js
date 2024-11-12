@@ -1,3 +1,11 @@
+let bankTransactions = [];
+let nonATMTransactions = [];
+let atmTypes = [];
+let nonAtmTypes = [];
+let atmTypeMap = {};
+let nonAtmTypeMap = {};
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     const userID = 2; // Adjust userID as needed
 
@@ -12,31 +20,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             throw new Error("Network response was not ok");
         }
 
-        const bankTransactions = await bankResponse.json();
-        const nonATMTransactions = await nonATMResponse.json();
-        const atmTypes = await atmTypesResponse.json();
-        const nonAtmTypes = await nonAtmTypesResponse.json();
+        // Assign data to global variables
+        bankTransactions = await bankResponse.json();
+        nonATMTransactions = await nonATMResponse.json();
+        atmTypes = await atmTypesResponse.json();
+        nonAtmTypes = await nonAtmTypesResponse.json();
 
-        console.log(bankTransactions);
-        console.log(nonATMTransactions);
-        console.log(atmTypes);
-        console.log(nonAtmTypes);
         
 
         // Map types for easier lookup
-        const atmTypeMap = Object.fromEntries(atmTypes.map(type => [type.typeID, type.typeName]));
-        const nonAtmTypeMap = Object.fromEntries(nonAtmTypes.map(type => [type.typeID, type.typeName]));
-
-        //console.log("Non-ATM Transactions:", nonATMTransactions);
+        atmTypeMap = Object.fromEntries(atmTypes.map(type => [type.typeID, type.typeName]));
+        nonAtmTypeMap = Object.fromEntries(nonAtmTypes.map(type => [type.typeID, type.typeName]));
 
         // Call chart functions
-        createMonthlyTransactionsChart(nonATMTransactions, atmTypeMap);
-        createSpendingCategoriesChart(nonATMTransactions, nonAtmTypeMap);
-        createAverageTransactionByCategoryChart(nonATMTransactions, nonAtmTypeMap);
+        createMonthlyTransactionsChart(nonATMTransactions, atmTypeMap, 'chart1');
+        createSpendingCategoriesChart(nonATMTransactions, nonAtmTypeMap, 'chart2');
+        createAverageTransactionByCategoryChart(nonATMTransactions, nonAtmTypeMap, 'chart3');
 
-        createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTypeMap);
-        createMostCommonTransactionDaysChart(nonATMTransactions);
-        generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap);
+        createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTypeMap, 'chart4');
+        createMostCommonTransactionDaysChart(nonATMTransactions, 'chart5');
+        generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, 'chart6');
         
 
     } catch (error) {
@@ -45,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Function to create a bar chart of total transactions by month
-function createMonthlyTransactionsChart(transactions, atmTypeMap) {
+function createMonthlyTransactionsChart(transactions, atmTypeMap, chartid) {
     const monthlyTotals = Array(12).fill(0); // Initialize array for 12 months
 
     transactions.forEach(transaction => {
@@ -56,7 +59,7 @@ function createMonthlyTransactionsChart(transactions, atmTypeMap) {
         }
     });
 
-    const ctx = document.getElementById('chart1').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'line',  // Change to 'line' for a line chart
         data: {
@@ -86,7 +89,7 @@ function createMonthlyTransactionsChart(transactions, atmTypeMap) {
 }
 
 // Function to create a pie chart of spending breakdown by category
-function createSpendingCategoriesChart(transactions, nonAtmTypeMap) {
+function createSpendingCategoriesChart(transactions, nonAtmTypeMap, chartid) {
     const categoryTotals = {};
     transactions.forEach(transaction => {
         const category = nonAtmTypeMap[transaction.typeID] || "Other";
@@ -96,7 +99,7 @@ function createSpendingCategoriesChart(transactions, nonAtmTypeMap) {
     const categoryLabels = Object.keys(categoryTotals);
     const categoryData = Object.values(categoryTotals);
 
-    const ctx = document.getElementById('chart2').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'pie',
         data: {
@@ -127,7 +130,7 @@ function createSpendingCategoriesChart(transactions, nonAtmTypeMap) {
 }
 
 // Function to create a bar chart to track the average spending per transaction in each category.
-function createAverageTransactionByCategoryChart(transactions, nonAtmTypeMap) {
+function createAverageTransactionByCategoryChart(transactions, nonAtmTypeMap, chartid) {
     const categoryTotals = {};
     const categoryCounts = {};
 
@@ -144,7 +147,7 @@ function createAverageTransactionByCategoryChart(transactions, nonAtmTypeMap) {
     const categoryLabels = Object.keys(categoryTotals);
     const categoryAverages = categoryLabels.map(category => categoryTotals[category] / categoryCounts[category]);
 
-    const ctx = document.getElementById('chart3').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -168,7 +171,7 @@ function createAverageTransactionByCategoryChart(transactions, nonAtmTypeMap) {
 }
 
 // Function to create a double bar chart to compare income and expenses per month
-function createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTypeMap) {
+function createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTypeMap, chartid) {
     // Initialize arrays to hold income and expenses for each month
     const monthlyIncome = Array(12).fill(0);
     const monthlyExpenses = Array(12).fill(0);
@@ -199,7 +202,7 @@ function createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTy
     });
 
     // Create the chart
-    const ctx = document.getElementById('chart4').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -256,7 +259,7 @@ function createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTy
 }
 
 // Function to create a bar chart to compare the number of transaction in a day
-function createMostCommonTransactionDaysChart(transactions) {
+function createMostCommonTransactionDaysChart(transactions, chartid) {
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayCounts = Array(7).fill(0); // Initialize an array to store transaction counts for each day of the week
 
@@ -266,7 +269,7 @@ function createMostCommonTransactionDaysChart(transactions) {
         dayCounts[dayOfWeek] += 1; // Increment the count for the corresponding day
     });
 
-    const ctx = document.getElementById('chart5').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'bar', // Bar chart type
         data: {
@@ -289,7 +292,7 @@ function createMostCommonTransactionDaysChart(transactions) {
     });
 }
 
-function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap) {
+function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, chartid) {
     const monthlyBalances = {};  // To store the account balance for each month
     const months = [];           // To store the months for the x-axis (e.g., January, February)
     const balances = [];         // To store the corresponding balance values
@@ -350,7 +353,7 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
     });
 
     // Create the Line Chart for monthly bank account balance
-    const ctx = document.getElementById('chart6').getContext('2d');
+    const ctx = document.getElementById(chartid).getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -386,116 +389,154 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
     });
 }
 
+
 async function generateFinancialReportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
+
     const pageHeight = doc.internal.pageSize.height;
     let yOffset = 10; // Starting position
 
-    // Set Title and Hardcoded Financial Status
+    // Set Title and Financial Status
     doc.setFontSize(16);
     doc.text("Financial Summary Report", 10, yOffset);
     yOffset += 10;
-    
+
     doc.setFontSize(12);
     doc.text("Your current financial status is as follows:", 10, yOffset);
     yOffset += 10;
     doc.text("Status: Stable with consistent spending and income flow. Continue budgeting carefully.", 10, yOffset);
     yOffset += 20;
 
-    // Capture Chart Images
-    const charts = ['chart1', 'chart2', 'chart3', 'chart4', 'chart5', 'chart6']; // ID of chart canvases
-    
-    for (const chartId of charts) {
-        const chart = document.getElementById(chartId);
-        if (chart) {
-            const canvas = await html2canvas(chart);
-            const imgData = canvas.toDataURL("image/png");
+    // Render charts in duplicate elements
+    await renderDuplicateCharts();
 
-            // Add image and check for overflow
-            if (yOffset + 100 > pageHeight) { 
-                doc.addPage();
-                yOffset = 10;
+    // IDs of the chart elements
+    const chartIds = ['duplicate-chart1', 'duplicate-chart2', 'duplicate-chart3', 'duplicate-chart4', 'duplicate-chart5', 'duplicate-chart6'];
+
+    for (const chartId of chartIds) {
+        const canvas = document.getElementById(chartId);
+
+        // Check if the canvas exists and is visible
+        if (canvas) {
+            try {
+                // Adding a delay to ensure chart rendering is complete
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Capture the chart as an image
+                const chartImage = await html2canvas(canvas).then(canvas => canvas.toDataURL("image/png"));
+
+                // Add the captured image to the PDF
+                doc.addImage(chartImage, 'PNG', 10, yOffset, 150, 80); // Smaller size for PDF
+                yOffset += 90; // Move down for the next chart
+
+                // Check if yOffset exceeds page height, and add a new page if necessary
+                if (yOffset + 90 > pageHeight) {
+                    doc.addPage();
+                    yOffset = 10; // Reset yOffset for new page
+                }
+            } catch (error) {
+                console.error(`Error capturing image for ${chartId}:`, error);
             }
-            doc.addImage(imgData, 'PNG', 10, yOffset, 180, 100);
-            yOffset += 110; // Space for the next chart
+        } else {
+            console.warn(`Canvas with id ${chartId} not found.`);
         }
     }
 
-    // Add Data Table
-    const sampleData = [
-        { category: "Income", amount: 5000 },
-        { category: "Shopping", amount: 1200 },
-        { category: "Medical", amount: 300 },
-        { category: "Entertainment", amount: 800 },
-        // Add more data as needed
-    ];
-    if (yOffset + 20 > pageHeight) { 
-        doc.addPage();
-        yOffset = 10;
-    }
-    doc.text("Detailed Financial Data:", 10, yOffset);
-    yOffset += 10;
-
-    sampleData.forEach((data, index) => {
-        if (yOffset + 10 > pageHeight) { 
-            doc.addPage();
-            yOffset = 10;
-        }
-        doc.text(`${data.category}: $${data.amount}`, 10, yOffset);
-        yOffset += 10;
-    });
-
-    // Save PDF and Generate QR Code for Download
+    // Generate PDF Blob and compress it to ZIP
     const pdfBlob = doc.output("blob");
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+    const zipBlob = await compressPDFToZip(pdfBlob);
 
-    // Generate QR Code for PDF download
-    const qrContainer = document.getElementById("qrCode");
-    qrContainer.innerHTML = ""; // Clear previous QR code if any
-    new QRCode(qrContainer, {
-        text: pdfUrl,
-        width: 128,
-        height: 128,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+    // Optional: Download the ZIP file locally
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = "Financial_Summary_Report.zip";
+    link.click();
+
+    // Optional: Send the ZIP file to the server
+    const reader = new FileReader();
+    reader.readAsDataURL(zipBlob);
+    reader.onloadend = async function () {
+        const base64Data = reader.result.split(',')[1]; // Get base64 part
+
+        await fetch('/send-zip', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: 'rishi070606@gmail.com', // The recipient's email address
+                zipData: base64Data
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Email sent:", data.message);
+        })
+        .catch(error => {
+            console.error("Error sending email:", error);
+        });
+    };
+
+    // Hide duplicate charts after PDF generation
+    chartIds.forEach(chartId => {
+        const canvas = document.getElementById(chartId);
+        if (canvas) canvas.style.display = 'none';
     });
+}
 
-    // Create Download Button
-    const downloadButton = document.createElement("a");
-    downloadButton.href = pdfUrl;
-    downloadButton.download = "Financial_Summary_Report.pdf";
-    downloadButton.textContent = "Download Financial Report";
-    document.body.appendChild(downloadButton); // Adjust as needed
+// Compress the PDF to a ZIP file
+async function compressPDFToZip(pdfBlob) {
+    const zip = new JSZip();
+    
+    // Add the PDF file with maximum compression level
+    zip.file("Financial_Summary_Report.pdf", pdfBlob, { compression: "DEFLATE", compressionOptions: { level: 9 } });
+    
+    // Generate the compressed ZIP blob
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    
+    return zipBlob;
+}
+
+
+async function renderDuplicateCharts() {
+    // Call chart functions and pass the duplicate canvas IDs
+    createMonthlyTransactionsChart(nonATMTransactions, atmTypeMap, 'duplicate-chart1');
+    createSpendingCategoriesChart(nonATMTransactions, nonAtmTypeMap, 'duplicate-chart2');
+    createAverageTransactionByCategoryChart(nonATMTransactions, nonAtmTypeMap, 'duplicate-chart3');
+    createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTypeMap, 'duplicate-chart4');
+    createMostCommonTransactionDaysChart(nonATMTransactions, 'duplicate-chart5');
+    generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, 'duplicate-chart6');
 }
 
 
 
 
 
+function toggleChart(containerId) {
+    const chartContainer = document.getElementById(containerId);
+    const overlay = document.createElement('div');
+    overlay.classList.add('chart-overlay');
+    overlay.onclick = closeExpandedChart;
 
-
-
-
-
-
-
-
-
-function toggleChart(chartId) {
-    const chartCanvas = document.getElementById(chartId);
-    const chartCard = chartCanvas.parentElement;
-
-    if (chartCard.classList.contains('expanded')) {
-        chartCard.classList.remove('expanded');
+    if (chartContainer.classList.contains('expanded-chart-container')) {
+        closeExpandedChart();
     } else {
-        // Collapse other charts
-        const otherCards = document.querySelectorAll('.chart-card');
-        otherCards.forEach(card => card.classList.remove('expanded'));
+        chartContainer.classList.add('expanded-chart-container');
+        chartContainer.classList.remove('hidden');
+        document.body.appendChild(overlay);
+    }
+}
 
-        // Expand the clicked chart
-        chartCard.classList.add('expanded');
+function closeExpandedChart() {
+    const expandedContainer = document.querySelector('.expanded-chart-container');
+    const overlay = document.querySelector('.chart-overlay');
+
+    if (expandedContainer) {
+        expandedContainer.classList.remove('expanded-chart-container');
+        expandedContainer.classList.add('hidden');
+    }
+    if (overlay) {
+        document.body.removeChild(overlay);
     }
 }
