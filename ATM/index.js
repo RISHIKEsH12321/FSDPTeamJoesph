@@ -148,7 +148,8 @@ app.post('/send-zip/', async (req, res) => {
     } catch (error) {
         console.error('Error sending email:', error);
         res.status(500).json({ error: 'Failed to send email' });
-
+    }
+});
 app.get("/print", async (req, res) => {
     try {
         const filePath = path.join(__dirname, "public", "html", "login(fingerprint).html");
