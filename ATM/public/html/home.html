@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="../css/Helpbuttonstyle.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/commonTutorial.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -68,7 +69,7 @@
                     <button class="btn btn-secondary">Set up quick transaction</button>
                 </div>
                 <div class="col-4 mb-3">
-                    <button class="btn btn-secondary">Balance Inquiry</button>
+                    <a href="/graph1"><button class="btn btn-secondary" >Balance inquiry</button></a>
                 </div>
                 <div class="col-4 mb-3">
                     <button class="btn btn-secondary">Bill Payment</button>
@@ -122,9 +123,98 @@
         </div>
 
     </div>
-    
+    <button id="helpButton" onclick="showHelp()">Need Help?</button>
     <div id="hint"></div>
+
+    <div id="helpOptions" class="popup">
+        <span class="close" onclick="toggleHelp()">&times;</span>
+        <p>How can we assist you today?</p>
+        <div class="options">
+            <button onclick="showDescription('cardRetained')">Card Retained</button>
+            <button onclick="showDescription('transactionFailed')">Transaction Failed</button>
+            <button onclick="showDescription('accountBalance')">Account Balance Issue</button>
+            <button onclick="showDescription('incorrectPIN')">Incorrect PIN</button>
+            <button onclick="showDescription('technicalError')">Technical Error</button>
+            <button onclick="showDescription('cashNotDispensed')">Cash Not Dispensed</button>
+            <button class="report" onclick="openContactForm()">Report Problems</button>
+        </div>
+        <p id="supportContact" style="margin-top: 20px; font-size: 14px; color: #555;">For assistance, contact us at: <strong>+1 800-123-4567</strong></p>
+    </div>
     
+
+    <div id="contactFormModal" class="modal" style="display: none;">
+        <h2>Report a Problem</h2>
+        <form id="contactForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" required>
+            <p id="phoneError" style="color: red;"></p>
+
+            <label for="problemDescription">Describe the Issue:</label>
+            <textarea id="problemDescription" rows="4" required></textarea>
+
+            <label for="timestamp">Report Time:</label>
+            <input type="text" id="timestamp" readonly>
+
+            <button type="submit">Submit</button>
+            <button type="button" onclick="closeContactForm()">Close</button>
+        </form>
+    </div>
+
+    <div id="detailedInfo" class="detailed-info" style="display: none;">
+        <h2 id="infoTitle"></h2>
+        <p id="infoContent"></p>
+        <button onclick="hideDetails()">Close</button>
+    </div>
+
+    <script src="../js/Helpbutton.js"></script>
+    <script>
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
+    
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const phoneError = document.getElementById("phoneError");
+    
+            phoneError.textContent = "";
+    
+            if (!isValidPhoneNumber(phoneNumber)) {
+                phoneError.textContent = "Please enter a valid phone number.";
+                phoneError.style.color = "red";
+                return;
+            }
+    
+            const report = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phoneNumber: phoneNumber,
+                problemDescription: document.getElementById("problemDescription").value,
+                timestamp: document.getElementById("timestamp").value
+            };
+    
+            // Send the data to the backend via a POST request
+            fetch('http://localhost:3000/submit-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(report)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById("contactForm").reset();
+                closeContactForm();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    </script>
     <script src="../js/home.js"></script>
     <script src="../js/commonTutorial.js"></script>
     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
