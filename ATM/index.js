@@ -177,6 +177,38 @@ app.get("/face", async (req, res) => {
     }
 });
 
+app.post('/submit-report', async (req, res) => {
+    const { name, email, phoneNumber, problemDescription, timestamp } = req.body;
+
+    const query = `INSERT INTO reports (name, email, phone_number, problem_description, timestamp) 
+                   VALUES (@name, @email, @phoneNumber, @problemDescription, @timestamp)`;
+
+    try {
+        const request = new sql.Request();
+        
+        // Declare each parameter explicitly
+        request.input('name', sql.VarChar, name);
+        request.input('email', sql.VarChar, email);
+        request.input('phoneNumber', sql.VarChar, phoneNumber);
+        request.input('problemDescription', sql.Text, problemDescription);
+        request.input('timestamp', sql.DateTime, timestamp);
+
+        // Execute the query
+        const result = await request.query(query);
+        res.status(200).json({ message: 'Report submitted successfully!' });
+    } catch (err) {
+        console.error('Error submitting report:', err);
+        res.status(500).json({ message: 'Failed to submit report' });
+    }
+});
+
+
+
+app.get("/report-page", async  (req,res) =>{
+    res.sendFile(path.join(__dirname, "public", "html", "Helpbutton.html"));
+
+})
+
 app.listen(port, async () => {
     try {
         // Connect to the database
