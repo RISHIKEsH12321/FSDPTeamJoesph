@@ -17,5 +17,5 @@ window.onload=function(){
 
 function exit(){
     sessionStorage.clear();
-    window.location.href="index.html";
+    window.location.href="index";
 }

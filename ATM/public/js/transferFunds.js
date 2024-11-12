@@ -43,5 +43,5 @@ function page3(){
 
 function exit(){
     sessionStorage.clear();
-    window.location.href="index.html";
+    window.location.href="index";
 }
