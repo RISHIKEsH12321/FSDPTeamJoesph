@@ -7,7 +7,7 @@ const dbConfig = require("./dbConfig");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 app.use("/",express.static("public")); //Static Files start from public 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -75,6 +75,22 @@ app.get("/face", async (req, res) => {
     }
 });
 
+app.post('/submit-report', (req, res) => {
+    const { name, email, phoneNumber, problemDescription, timestamp } = req.body;
+
+    const query = `INSERT INTO reports (name, email, phone_number, problem_description, timestamp) 
+                   VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [name, email, phoneNumber, problemDescription, timestamp], (err, result) => {
+        if (err) {
+            console.error('Error submitting report:', err);
+            return res.status(500).json({ message: 'Failed to submit report' });
+        }
+        res.status(200).json({ message: 'Report submitted successfully!' });
+    });
+});
+
+
 app.listen(port, async () => {
     try {
         // Connect to the database
@@ -89,3 +105,4 @@ app.listen(port, async () => {
 
     console.log(`Server listening on port ${port}`);
 });
+

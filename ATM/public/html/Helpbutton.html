@@ -59,57 +59,58 @@
     </div>
 
     <script src="../js/Helpbutton.js"></script>
-
-<!--<script>
-    document.getElementById("contactForm").onsubmit = function(e) {
-        e.preventDefault();
-
-        const phoneNumber = document.getElementById("phoneNumber").value;
-        const phoneError = document.getElementById("phoneError");
-
-        phoneError.textContent = "";
-
-        if (!isValidPhoneNumber(phoneNumber)) {
-            phoneError.textContent = "Please enter a valid phone number.";
-            phoneError.style.color = "red";
-            return;
-        }
-
-        const report = {
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            phoneNumber: phoneNumber,
-            problemDescription: document.getElementById("problemDescription").value,
-            timestamp: document.getElementById("timestamp").value
+    <script>
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
+    
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const phoneError = document.getElementById("phoneError");
+    
+            phoneError.textContent = "";
+    
+            if (!isValidPhoneNumber(phoneNumber)) {
+                phoneError.textContent = "Please enter a valid phone number.";
+                phoneError.style.color = "red";
+                return;
+            }
+    
+            const report = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phoneNumber: phoneNumber,
+                problemDescription: document.getElementById("problemDescription").value,
+                timestamp: document.getElementById("timestamp").value
+            };
+    
+            // Send the data to the backend via a POST request
+            fetch('http://localhost:3000/submit-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(report)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById("contactForm").reset();
+                closeContactForm();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         };
-
-        // Send the data to the backend via a POST request
-        fetch('http://localhost:3000/submit-report', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(report)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            document.getElementById("contactForm").reset();
-            closeContactForm();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    };
-</script>
+    </script>
+<!--
 submit report sql
 CREATE TABLE reports (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
     problem_description TEXT NOT NULL,
     timestamp DATETIME NOT NULL
+)
 
 To put into index.js
 app.post('/submit-report', (req, res) => {
