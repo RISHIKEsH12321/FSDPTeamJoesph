@@ -62,6 +62,25 @@ app.get("/testPage", async (req, res) => {
         sql.close();
     }
 });
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "home.html"));
+  });
+app.get('/tutorial', (req, res) => {
+res.sendFile(path.join(__dirname, "public", "html", "tutorial.html"));
+});
+app.get('/deposit', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "deposit.html"));
+});
+app.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "index.html"));
+});
+app.get('/processing', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "processing.html"));
+});
+app.get('/transferFunds', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "transferFunds.html"));
+});
+
 
 app.get("/atmTypes", atmTypes.getATMTransactionTypes);
 app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);

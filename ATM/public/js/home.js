@@ -74,14 +74,10 @@ function moreDeposit(){
 }
 
 function gotoFundsTransfer(){
-    window.location.href="transferFunds.html";
+    window.location.href="transferFunds";
 }
 
 function gotoDeposit(){
-    window.location.href="deposit.html";
+    window.location.href="deposit";
 }
 
-function gotoProcessing(e){
-    e.preventDefault();
-    window.location.href="processing.html";
-}

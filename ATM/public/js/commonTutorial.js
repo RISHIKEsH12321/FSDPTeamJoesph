@@ -3,7 +3,7 @@ function showTutorial(){
     const tutorialType = sessionStorage.getItem("tutorialType");
     console.log("start of function"+tutorialType);
     if(tutorialType == null || tutorialType =="null"){
-        window.location.href = "tutorial.html";
+        window.location.href = "tutorial";
     }else{
         document.getElementById("tutorial").innerText = "Tutorial";
         document.getElementById("hint").style.display = "none";
@@ -14,5 +14,10 @@ function showTutorial(){
 
 function exit(){
     sessionStorage.clear();
-    window.location.href="index.html";
+    window.location.href="index";
+}
+
+function gotoProcessing(e){
+    e.preventDefault();
+    window.location.href="processing";
 }
