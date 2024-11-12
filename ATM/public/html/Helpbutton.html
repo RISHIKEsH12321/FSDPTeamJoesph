@@ -110,6 +110,22 @@ CREATE TABLE reports (
     phone_number VARCHAR(20) NOT NULL,
     problem_description TEXT NOT NULL,
     timestamp DATETIME NOT NULL
+
+To put into index.js
+app.post('/submit-report', (req, res) => {
+    const { name, email, phoneNumber, problemDescription, timestamp } = req.body;
+
+    const query = `INSERT INTO reports (name, email, phone_number, problem_description, timestamp) 
+                   VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [name, email, phoneNumber, problemDescription, timestamp], (err, result) => {
+        if (err) {
+            console.error('Error submitting report:', err);
+            return res.status(500).json({ message: 'Failed to submit report' });
+        }
+        res.status(200).json({ message: 'Report submitted successfully!' });
+    });
+});
 );
 --> 
 
