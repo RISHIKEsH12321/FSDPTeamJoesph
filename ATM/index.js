@@ -150,17 +150,17 @@ app.post('/send-zip/', async (req, res) => {
         res.status(500).json({ error: 'Failed to send email' });
     }
 });
-app.get("/print", async (req, res) => {
-    try {
-        const filePath = path.join(__dirname, "public", "html", "login(fingerprint).html");
-        res.sendFile(filePath);
-    } catch (err) {
-        console.error("Error executing query:", err);
-        res.status(500).send("Internal Server Error");
-    } finally {
-        // Close the database connection
-        sql.close();
-    }
+
+app.get("/logo", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "index.html"));
+});
+
+app.get("/print", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
+});
+
+app.get("/pin", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "pin.html"));
 });
 
 app.get("/face", async (req, res) => {
