@@ -1,0 +1,134 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/Helpbuttonstyle.css" type="text/css">
+</head>
+
+<body id="helpID">
+
+    <button id="helpButton" onclick="showHelp()">Need Help?</button>
+
+    <!-- <div id="logo">
+        <img src="OCBC_logo.png" alt="OCBC logo" class="Logo">
+    </div>!-->
+
+    <div id="helpOptions" class="popup">
+        <span class="close" onclick="toggleHelp()">&times;</span>
+        <p>How can we assist you today?</p>
+        <div class="options">
+            <button onclick="showDescription('cardRetained')">Card Retained</button>
+            <button onclick="showDescription('transactionFailed')">Transaction Failed</button>
+            <button onclick="showDescription('accountBalance')">Account Balance Issue</button>
+            <button onclick="showDescription('incorrectPIN')">Incorrect PIN</button>
+            <button onclick="showDescription('technicalError')">Technical Error</button>
+            <button onclick="showDescription('cashNotDispensed')">Cash Not Dispensed</button>
+            <button class="report" onclick="openContactForm()">Report Problems</button>
+        </div>
+        <p id="supportContact" style="margin-top: 20px; font-size: 14px; color: #555;">For assistance, contact us at: <strong>+1 800-123-4567</strong></p>
+    </div>
+    
+
+    <div id="contactFormModal" class="modal" style="display: none;">
+        <h2>Report a Problem</h2>
+        <form id="contactForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" required>
+            <p id="phoneError" style="color: red;"></p>
+
+            <label for="problemDescription">Describe the Issue:</label>
+            <textarea id="problemDescription" rows="4" required></textarea>
+
+            <label for="timestamp">Report Time:</label>
+            <input type="text" id="timestamp" readonly>
+
+            <button type="submit">Submit</button>
+            <button type="button" onclick="closeContactForm()">Close</button>
+        </form>
+    </div>
+
+    <div id="detailedInfo" class="detailed-info" style="display: none;">
+        <h2 id="infoTitle"></h2>
+        <p id="infoContent"></p>
+        <button onclick="hideDetails()">Close</button>
+    </div>
+
+    <script src="../js/Helpbutton.js"></script>
+    <script>
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
+    
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const phoneError = document.getElementById("phoneError");
+    
+            phoneError.textContent = "";
+    
+            if (!isValidPhoneNumber(phoneNumber)) {
+                phoneError.textContent = "Please enter a valid phone number.";
+                phoneError.style.color = "red";
+                return;
+            }
+    
+            const report = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phoneNumber: phoneNumber,
+                problemDescription: document.getElementById("problemDescription").value,
+                timestamp: document.getElementById("timestamp").value
+            };
+    
+            // Send the data to the backend via a POST request
+            fetch('http://localhost:3000/submit-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(report)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById("contactForm").reset();
+                closeContactForm();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    </script>
+<!--
+submit report sql
+CREATE TABLE reports (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    problem_description TEXT NOT NULL,
+    timestamp DATETIME NOT NULL
+)
+
+To put into index.js
+app.post('/submit-report', (req, res) => {
+    const { name, email, phoneNumber, problemDescription, timestamp } = req.body;
+
+    const query = `INSERT INTO reports (name, email, phone_number, problem_description, timestamp) 
+                   VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [name, email, phoneNumber, problemDescription, timestamp], (err, result) => {
+        if (err) {
+            console.error('Error submitting report:', err);
+            return res.status(500).json({ message: 'Failed to submit report' });
+        }
+        res.status(200).json({ message: 'Report submitted successfully!' });
+    });
+});
+);
+--> 
+
+</body>
+
