@@ -1,7 +1,7 @@
-const tutorialType = localStorage.getItem("tutorialType");
+const tutorialType = sessionStorage.getItem("tutorialType");
 console.log(tutorialType);
 window.onload = function() {
-    const tutorialType = localStorage.getItem("tutorialType");
+    const tutorialType = sessionStorage.getItem("tutorialType");
     if(tutorialType == "deposit"){
         document.getElementById("tutorial").innerText = "Cancel Tutorial";
         const hintDiv = document.getElementById("hint");
@@ -40,6 +40,6 @@ function page3(){
 }
 
 function exit(){
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href="index.html";
 }
