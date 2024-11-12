@@ -1,9 +1,11 @@
-div#test{
+
+div#logo {
     display: flex;
     justify-content: center;  
     align-items: center;      
     height: 100vh;
 }
+
 
 body {
     font-family: Arial, sans-serif;
@@ -41,6 +43,7 @@ body {
     border-radius: 8px;
     text-align: center;
     width: 300px;
+    z-index: 10;
 }
 
 .popup .close {
@@ -51,6 +54,7 @@ body {
     cursor: pointer;
     color: #333;
 }
+
 
 .options button {
     display: block;
@@ -70,11 +74,11 @@ body {
 }
 
 
-.options .emergency {
+.options .report {
     background-color: #FF0000;
 }
 
-.options .emergency:hover {
+.options .report:hover {
     background-color: #cc0000;
 }
 
@@ -104,5 +108,48 @@ body {
 }
 
 .detailed-info button:hover {
+    background-color: #0056b3;
+}
+
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    text-align: left;
+    width: 400px;
+    z-index: 1000;
+}
+
+.modal form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.modal form input, .modal form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modal form button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal form button:hover {
     background-color: #0056b3;
 }
