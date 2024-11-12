@@ -1,6 +1,7 @@
 document.getElementById("moreService").style.cssText = "display: none !important";
+document.getElementById("deposit").style.cssText = "display: none !important";
 window.onload = function() {
-    const tutorialType = localStorage.getItem("tutorialType");
+    const tutorialType = sessionStorage.getItem("tutorialType");
     console.log(tutorialType);
 
     if(tutorialType == "transfer"){
@@ -33,7 +34,7 @@ window.onload = function() {
 };
 
 function showMoreService() {
-    tutorialType = localStorage.getItem("tutorialType");
+    tutorialType = sessionStorage.getItem("tutorialType");
     console.log("start of function"+tutorialType);
     document.getElementById("home").style.cssText = "display: none !important";
     document.getElementById("moreService").style.display = "block";
@@ -58,6 +59,19 @@ function showMoreService() {
     tHint.style.left = "10%"; 
 }
 
+function moreDeposit(){
+    event.preventDefault();
+    document.getElementById("home").style.cssText = "display: none !important";
+    document.getElementById("deposit").style.display = "block";
+
+    const wHint = document.getElementById("wHint");
+    wHint.innerHTML=
+    `
+        <dotlottie-player src="https://lottie.host/a8941040-8f8e-4289-b3a3-7097e111597c/buuzWAWsDB.json" background="transparent" speed="2" style="width: 240px; height: 240px;" loop autoplay></dotlottie-player>
+        <h4>Confirm amount to withdraw</h4>
+    `
+    wHint.style.left = "60%";
+}
 
 function gotoFundsTransfer(){
     window.location.href="transferFunds.html";
@@ -65,4 +79,9 @@ function gotoFundsTransfer(){
 
 function gotoDeposit(){
     window.location.href="deposit.html";
+}
+
+function gotoProcessing(e){
+    e.preventDefault();
+    window.location.href="processing.html";
 }

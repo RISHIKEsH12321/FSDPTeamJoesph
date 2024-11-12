@@ -3,19 +3,19 @@ function closeTutorial(){
 }
 
 function transferTutorial(){
-    localStorage.setItem("tutorialType","transfer");
+    sessionStorage.setItem("tutorialType","transfer");
     window.location.href = "home.html";
 }
 function withdrawTutorial(){
-    localStorage.setItem("tutorialType","withdraw");
+    sessionStorage.setItem("tutorialType","withdraw");
     window.location.href = "home.html";
 }
 function depositTutorial(){
-    localStorage.setItem("tutorialType","deposit");
+    sessionStorage.setItem("tutorialType","deposit");
     window.location.href = "home.html";
 }
 
 function exit(){
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href="index.html";
 }
