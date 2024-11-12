@@ -7,6 +7,7 @@ let nonAtmTypeMap = {};
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+    disableScroll();
     const userID = 2; // Adjust userID as needed
 
     try {
@@ -83,6 +84,18 @@ function createMonthlyTransactionsChart(transactions, atmTypeMap, chartid) {
                 y: {
                     beginAtZero: true
                 }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Personal Spending',
+                    font: {
+                        size: 30
+                    }
+                }
             }
         }
     });
@@ -125,7 +138,22 @@ function createSpendingCategoriesChart(transactions, nonAtmTypeMap, chartid) {
                 ],
                 borderWidth: 1
             }]
+        },       
+        options: {
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Spending Categoires',
+                    font: {
+                        size: 30
+                    }
+                }
+            }
         }
+
     });
 }
 
@@ -164,6 +192,18 @@ function createAverageTransactionByCategoryChart(transactions, nonAtmTypeMap, ch
             scales: {
                 y: {
                     beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Categories',
+                    font: {
+                        size: 30
+                    }
                 }
             }
         }
@@ -251,7 +291,10 @@ function createIncomeVsExpensesChart(bankTransactions, nonATMTransactions, atmTy
                 },
                 title: {
                     display: true,
-                    text: 'Income vs. Expenses Comparison'
+                    text: 'Income vs. Expenses Comparison',
+                    font: {
+                        size: 30
+                    }
                 }
             }
         }
@@ -287,11 +330,24 @@ function createMostCommonTransactionDaysChart(transactions, chartid) {
                 y: {
                     beginAtZero: true
                 }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Transaction Dates',
+                    font: {
+                        size: 30
+                    }
+                }
             }
         }
     });
 }
 
+// Function to create a line graph showing balance over time
 function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, chartid) {
     const monthlyBalances = {};  // To store the account balance for each month
     const months = [];           // To store the months for the x-axis (e.g., January, February)
@@ -382,6 +438,18 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
                     title: {
                         display: true,
                         text: 'Balance ($)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Balance',
+                    font: {
+                        size: 30
                     }
                 }
             }
@@ -509,10 +577,6 @@ async function renderDuplicateCharts() {
     generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, 'duplicate-chart6');
 }
 
-
-
-
-
 function toggleChart(containerId) {
     const chartContainer = document.getElementById(containerId);
     const overlay = document.createElement('div');
@@ -526,6 +590,13 @@ function toggleChart(containerId) {
         chartContainer.classList.remove('hidden');
         document.body.appendChild(overlay);
     }
+    // Add a subtle animation to the card
+    const card = document.getElementById(containerId).parentNode;
+    card.classList.add('card-clicked');
+    setTimeout(() => {
+        card.classList.remove('card-clicked');
+    }, 300);
+    
 }
 
 function closeExpandedChart() {
@@ -539,4 +610,20 @@ function closeExpandedChart() {
     if (overlay) {
         document.body.removeChild(overlay);
     }
+}
+
+function disableScroll() {
+    // Get the current page scroll position
+    scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop;
+    scrollLeft =
+        window.pageXOffset ||
+        document.documentElement.scrollLeft,
+
+        // if any scroll is attempted,
+        // set this to the previous value
+        window.onscroll = function () {
+            window.scrollTo(scrollLeft, scrollTop);
+        };
 }
