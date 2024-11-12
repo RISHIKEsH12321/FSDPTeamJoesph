@@ -1,0 +1,6 @@
+#rectangle{
+    width: 35%;          /* Width of the rectangle */
+    height: 80px;         /* Height of the rectangle */
+    border: 5px solid #000;    /* Border color and thickness */
+    margin: 0px auto; 
+}

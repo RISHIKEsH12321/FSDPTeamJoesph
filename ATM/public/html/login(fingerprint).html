@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM Fingerprint Login</title>
+  <style>
+    /* General Styles */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    
+    /* ATM Container Styles */
+    .atm-container {
+      width: 300px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    /* Heading and Text */
+    h2 {
+      margin: 0 0 20px;
+      color: #333;
+    }
+    p {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* Fingerprint Button */
+    .fingerprint-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .fingerprint-button:hover {
+      background-color: #45a049;
+    }
+
+    /* Status Message */
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ATM Container -->
+  <div class="atm-container">
+    <h2>ATM Login</h2>
+    <p>Use your fingerprint to log in securely.</p>
+    <button class="fingerprint-button" onclick="authenticate()">Login with Fingerprint</button>
+    <p id="status"></p>
+  </div>
+
+  <!-- JavaScript for Authentication -->
+  <script>
+    async function authenticate() {
+      const status = document.getElementById("status");
+      try {
+        if (window.PublicKeyCredential) {
+          const challenge = new Uint8Array(32);
+          window.crypto.getRandomValues(challenge); // Generates a random challenge
+
+          const options = {
+            publicKey: {
+              challenge,
+              allowCredentials: [],
+              timeout: 60000,
+              userVerification: "required"
+            }
+          };
+
+          const credential = await navigator.credentials.get(options);
+          if (credential) {
+            status.textContent = "Fingerprint authentication successful!";
+            status.style.color = "green";
+          }
+        } else {
+          status.textContent = "Fingerprint authentication not supported on this device.";
+        }
+      } catch (error) {
+        status.textContent = "Authentication failed: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

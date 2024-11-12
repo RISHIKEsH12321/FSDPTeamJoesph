@@ -1,0 +1,24 @@
+#wHint{
+    position: absolute;
+    top: 50%;
+    left: 45%;
+}
+
+#dHint{
+    position: absolute;
+    top: 35%;
+    left: 45%;
+}
+
+#tHint{
+    position: absolute;
+    top: 50%;
+    left: 55%;
+}
+
+#depositSubmit{
+    width: 20%;
+    padding: 10px 0px 10px 0px;
+    margin-top: 5px;
+    font-size: 1.2em;
+}

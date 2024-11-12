@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM Facial Recognition Login</title>
+  <style>
+    /* General Styling */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    
+    /* ATM Container */
+    .atm-container {
+      width: 300px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    /* Text and Button */
+    h2 {
+      margin: 0 0 20px;
+      color: #333;
+    }
+    p {
+      color: #666;
+      font-size: 14px;
+    }
+    .start-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .start-button:hover {
+      background-color: #45a049;
+    }
+    
+    /* Video Stream */
+    video {
+      width: 100%;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    /* Status Message */
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: red;
+    }
+  </style>
+  <!-- Face API.js from CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api"></script>
+</head>
+<body>
+
+  <!-- ATM Container -->
+  <div class="atm-container">
+    <h2>ATM Login</h2>
+    <p>Use facial recognition to log in securely.</p>
+    <video id="video" autoplay muted></video>
+    <button class="start-button" onclick="startRecognition()">Start Facial Recognition</button>
+    <p id="status">Click "Start" to begin.</p>
+  </div>
+
+  <script>
+    const statusMessage = document.getElementById("status");
+    const video = document.getElementById("video");
+
+    async function loadModels() {
+      // Load the Face API models
+      await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+      statusMessage.textContent = "Models loaded. Ready to start.";
+    }
+
+    async function startVideo() {
+      // Start the webcam video stream
+      navigator.mediaDevices.getUserMedia({ video: {} })
+        .then(stream => video.srcObject = stream)
+        .catch(err => console.error("Error accessing webcam: ", err));
+    }
+
+    async function startRecognition() {
+      statusMessage.textContent = "Detecting face...";
+      const detectionOptions = new faceapi.TinyFaceDetectorOptions();
+
+      // Detect face every 1 second
+      setInterval(async () => {
+        const detection = await faceapi.detectSingleFace(video, detectionOptions);
+        if (detection) {
+          statusMessage.textContent = "Face detected. Login successful!";
+          statusMessage.style.color = "green";
+        } else {
+          statusMessage.textContent = "Face not recognized. Please try again.";
+          statusMessage.style.color = "red";
+        }
+      }, 1000);
+    }
+
+    // Load models and start video when the page loads
+    window.addEventListener("load", async () => {
+      await loadModels();
+      startVideo();
+    });
+  </script>
+</body>
+</html>
