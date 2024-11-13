@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Recognition Login</title>
+    <script src="../js/face-api.min.js"></script>
     <style>
+        /* General Styling */
         body {
             display: flex;
             justify-content: center;
@@ -14,26 +16,65 @@
             background-color: #f0f0f0;
             margin: 0;
         }
+
+        /* Video Container Styling */
         #video-container {
             position: relative;
             width: 640px;
             height: 480px;
         }
+
         #video {
             width: 100%;
             height: auto;
             border-radius: 8px;
         }
+
+        /* Back Button Styling */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #00509e;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease;
+        }
+
+        .back-button::before {
+            content: '←'; /* Left arrow character */
+            font-size: 24px;
+            color: white;
+            line-height: 1; /* Center arrow vertically */
+        }
     </style>
 </head>
 <body>
+    <!-- Back Button -->
+    <div class="back-button" onclick="goBack()">
+    </div>
+
+    <!-- Video Container -->
     <div id="video-container">
         <video id="video" autoplay muted></video>
     </div>
-    
-    <!-- Load face-api.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+
     <script>
+        // Function to navigate to the previous page
+        function goBack() {
+            window.history.back();
+        }
+
+        // Set up the camera for facial recognition
         async function setupCamera() {
             const video = document.getElementById('video');
             try {
@@ -41,55 +82,55 @@
                 video.srcObject = stream;
                 return new Promise((resolve) => {
                     video.onloadedmetadata = () => {
+                        video.play();
                         resolve(video);
                     };
                 });
             } catch (error) {
                 console.error("Error accessing webcam:", error);
+                alert("Webcam access is needed for facial recognition. Please check permissions.");
             }
         }
 
+        // Load face-api.js models for face detection
         async function loadModels() {
-            // Load face detection and recognition models
             await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
             await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-            await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('models');
+            await faceapi.nets.faceExpressionNet.loadFromUri('/models');
             console.log("Models loaded");
         }
 
+        // Detect faces and trigger navigation when detected
         async function detectFaces(video) {
             const options = new faceapi.TinyFaceDetectorOptions();
+            let faceDetected = false; // Track detection to avoid multiple redirects
+            const interval = setInterval(async () => {
+                const detections = await faceapi.detectAllFaces(video, options).withFaceLandmarks();
 
-            video.addEventListener('play', async () => {
-                const canvas = faceapi.createCanvasFromMedia(video);
-                document.getElementById('video-container').append(canvas);
+                // Proceed only if no redirection has occurred yet and face is detected
+                if (!faceDetected && detections.length > 0) {
+                    console.log("Face detected");
+                    faceDetected = true; // Prevent further detections
 
-                const displaySize = { width: video.width, height: video.height };
-                faceapi.matchDimensions(canvas, displaySize);
+                    // Delay and navigate to the next page
+                    setTimeout(() => {
+                        window.location.href = "/home"; 
+                    }, 1500); 
 
-                setInterval(async () => {
-                    const detections = await faceapi.detectAllFaces(video, options).withFaceLandmarks().withFaceDescriptors();
-                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                    faceapi.draw.drawDetections(canvas, resizedDetections);
-                    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-
-                    if (detections.length > 0) {
-                        console.log("Face detected", detections);
-                        // Perform additional checks or trigger login success
-                    }
-                }, 100);
-            });
+                    clearInterval(interval); // Stop further detections
+                }
+            }, 100);
         }
 
-        // Initialize the face recognition setup
+        // Initialize the facial recognition setup
         async function init() {
             await loadModels();
             const video = await setupCamera();
             detectFaces(video);
         }
 
+        // Run the initialization function on page load
         init();
     </script>
 </body>
