@@ -113,10 +113,11 @@ body#helpID {
 
 
 .modal {
+    display: none; 
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    /* transform: translate(-50%, -50%); */
     background-color: white;
     padding: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -125,6 +126,7 @@ body#helpID {
     width: 400px;
     z-index: 1000;
 }
+
 
 .modal form label {
     display: block;
