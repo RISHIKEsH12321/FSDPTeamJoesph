@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASD</title>
+    <title>Transaction Report</title>
 
     <!-- For the chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
@@ -16,6 +16,12 @@
     <!-- ZIP File -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
+    <!-- Lottie Animation -->
+    <!-- Loading -->
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>  
+    <!-- Completed -->
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script> 
+
 
     <script src="../js/dataVis.js" defer></script>
     <link rel="stylesheet" href="../css/dataVis.css">
@@ -26,8 +32,8 @@
 <body>
     <div id="content">
         <img id="logo" src="../images/OCBC_logo.png" title="OCBC Logo">
-        <h1>Visualise Your Transactions</h1>
-        
+        <h1>Visualise Your Finance</h1>
+
         <div id="cardContainer">
             <div class="chart-card" onclick="toggleChart('chart1Container')">
                 <p>Personal Transactions</p>
@@ -75,7 +81,13 @@
 
         <button id="reportBtn" onclick="generateFinancialReportPDF()">Generate Financial Report</button>
 
+        
     </div>  
+    
+    <dotlottie-player id = "loading-animation"src="https://lottie.host/220d5e89-673c-4848-abfb-429f726b188f/vsd6jKjegn.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+    <dotlottie-player id = "completed-animation"src="https://lottie.host/e6d9bea7-d9d9-40a8-afdd-098086cbea91/x2SS2QkBQI.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+    <div id="overlay"></div>
+
     <div id="duplicate-container">
         <canvas id="duplicate-chart1" class="chart"></canvas>
         <canvas id="duplicate-chart2" class="chart"></canvas>

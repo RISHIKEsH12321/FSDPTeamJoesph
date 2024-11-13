@@ -459,11 +459,15 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
 
 
 async function generateFinancialReportPDF() {
+    // Show the loading animation and overlay
+    document.getElementById("loading-animation").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("reportBtn").disabled = true; // Disable button
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     const pageHeight = doc.internal.pageSize.height;
-    let yOffset = 10; // Starting position
+    let yOffset = 10;
 
     // Set Title and Financial Status
     doc.setFontSize(16);
@@ -476,32 +480,22 @@ async function generateFinancialReportPDF() {
     doc.text("Status: Stable with consistent spending and income flow. Continue budgeting carefully.", 10, yOffset);
     yOffset += 20;
 
-    // Render charts in duplicate elements
     await renderDuplicateCharts();
-
-    // IDs of the chart elements
     const chartIds = ['duplicate-chart1', 'duplicate-chart2', 'duplicate-chart3', 'duplicate-chart4', 'duplicate-chart5', 'duplicate-chart6'];
 
     for (const chartId of chartIds) {
         const canvas = document.getElementById(chartId);
 
-        // Check if the canvas exists and is visible
         if (canvas) {
             try {
-                // Adding a delay to ensure chart rendering is complete
                 await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Capture the chart as an image
                 const chartImage = await html2canvas(canvas).then(canvas => canvas.toDataURL("image/png"));
+                doc.addImage(chartImage, 'PNG', 10, yOffset, 150, 80);
+                yOffset += 90;
 
-                // Add the captured image to the PDF
-                doc.addImage(chartImage, 'PNG', 10, yOffset, 150, 80); // Smaller size for PDF
-                yOffset += 90; // Move down for the next chart
-
-                // Check if yOffset exceeds page height, and add a new page if necessary
                 if (yOffset + 90 > pageHeight) {
                     doc.addPage();
-                    yOffset = 10; // Reset yOffset for new page
+                    yOffset = 10;
                 }
             } catch (error) {
                 console.error(`Error capturing image for ${chartId}:`, error);
@@ -511,21 +505,18 @@ async function generateFinancialReportPDF() {
         }
     }
 
-    // Generate PDF Blob and compress it to ZIP
     const pdfBlob = doc.output("blob");
     const zipBlob = await compressPDFToZip(pdfBlob);
 
-    // Optional: Download the ZIP file locally
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(zipBlob);
-    link.download = "Financial_Summary_Report.zip";
-    link.click();
+    // const link = document.createElement("a");
+    // link.href = URL.createObjectURL(zipBlob);
+    // link.download = "Financial_Summary_Report.zip";
+    // link.click();
 
-    // Optional: Send the ZIP file to the server
     const reader = new FileReader();
     reader.readAsDataURL(zipBlob);
     reader.onloadend = async function () {
-        const base64Data = reader.result.split(',')[1]; // Get base64 part
+        const base64Data = reader.result.split(',')[1];
 
         await fetch('/send-zip', {
             method: 'POST',
@@ -533,25 +524,35 @@ async function generateFinancialReportPDF() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: 'rishi070606@gmail.com', // The recipient's email address
+                email: 'rishi070606@gmail.com',
                 zipData: base64Data
             })
         })
         .then(response => response.json())
         .then(data => {
             console.log("Email sent:", data.message);
+            // Show the completed animation and hide the loading animation
+            document.getElementById("loading-animation").style.display = "none";
+            document.getElementById("completed-animation").style.display = "block";
         })
         .catch(error => {
             console.error("Error sending email:", error);
         });
     };
 
-    // Hide duplicate charts after PDF generation
     chartIds.forEach(chartId => {
         const canvas = document.getElementById(chartId);
         if (canvas) canvas.style.display = 'none';
     });
+
+    // Add click listener to completed animation to hide it
+    document.getElementById("completed-animation").onclick = function() {
+        document.getElementById("completed-animation").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("reportBtn").disabled = false; // Enable button again
+    };
 }
+
 
 // Compress the PDF to a ZIP file
 async function compressPDFToZip(pdfBlob) {
