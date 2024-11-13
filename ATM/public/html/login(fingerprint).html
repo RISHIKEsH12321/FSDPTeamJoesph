@@ -52,6 +52,12 @@
       background-color: #45a049;
     }
 
+    /* Disabled Fingerprint Button */
+    .fingerprint-button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
     /* Status Message */
     #status {
       margin-top: 15px;
@@ -66,38 +72,70 @@
   <div class="atm-container">
     <h2>ATM Login</h2>
     <p>Use your fingerprint to log in securely.</p>
-    <button class="fingerprint-button" onclick="authenticate()">Login with Fingerprint</button>
+    <button id="fingerprintButton" class="fingerprint-button" onclick="authenticate()">Login with Fingerprint</button>
     <p id="status"></p>
   </div>
 
-  <!-- JavaScript for Authentication -->
+  <!-- JavaScript for Fingerprint Authentication -->
   <script>
+    let requestPending = false;  // Track if a request is already in progress
+
     async function authenticate() {
       const status = document.getElementById("status");
+      const fingerprintButton = document.getElementById("fingerprintButton");
+
+      if (requestPending) {
+        status.textContent = "A request is already in progress. Please wait...";
+        status.style.color = "orange";
+        return;
+      }
+
       try {
+        // Disable the button to prevent multiple clicks
+        fingerprintButton.disabled = true;
+        requestPending = true;
+
+        // Check if WebAuthn is supported
         if (window.PublicKeyCredential) {
           const challenge = new Uint8Array(32);
-          window.crypto.getRandomValues(challenge); // Generates a random challenge
+          window.crypto.getRandomValues(challenge); // Generate a random challenge
 
           const options = {
             publicKey: {
-              challenge,
-              allowCredentials: [],
-              timeout: 60000,
-              userVerification: "required"
+              challenge: challenge, // This should come from your server in a real-world scenario
+              timeout: 60000, // 1 minute timeout for the authentication process
+              userVerification: "required", // Ensures the device requires biometric verification (fingerprint)
+              allowCredentials: [] // List of previously registered credentials
             }
           };
 
+          // Debugging log to confirm WebAuthn is called
+          console.log("Attempting to call WebAuthn...");
+          
+          // Request the credential (biometric auth)
           const credential = await navigator.credentials.get(options);
+
           if (credential) {
             status.textContent = "Fingerprint authentication successful!";
             status.style.color = "green";
+          } else {
+            // This message should help debug if WebAuthn fails silently
+            status.textContent = "Fingerprint authentication failed. Make sure your fingerprint is registered.";
+            status.style.color = "red";
           }
         } else {
           status.textContent = "Fingerprint authentication not supported on this device.";
+          status.style.color = "red";
         }
       } catch (error) {
+        // Enhanced error logging for debugging
+        console.error("WebAuthn error: ", error);
         status.textContent = "Authentication failed: " + error.message;
+        status.style.color = "red";
+      } finally {
+        // Re-enable the button after the process is complete
+        fingerprintButton.disabled = false;
+        requestPending = false;
       }
     }
   </script>

@@ -8,6 +8,31 @@
 </head>
 <body>
     <img src="../images/OCBC_logo.png" alt="logo">
-    <p>Insert bank card to start</p>
+    
+    <!-- Make the text clickable -->
+    <a href="pin.html" style="text-decoration: none; color: inherit;">
+        <p>Insert bank card to start</p>
+    </a>
+
+    <!-- Button Container -->
+    <div class="button-container">
+        <button class="login-button" id="fingerprint" onclick="navigateToPage('fingerprint')">Continue with Fingerprint</button>
+        <button class="login-button" id="facial" onclick="navigateToPage('facial')">Continue with Facial Recognition</button>
+    </div>
+
+    <!-- JavaScript for page navigation -->
+    <script>
+        function navigateToPage(type) {
+            if (type === 'fingerprint') {
+                window.location.href = 'fingerprint.html';  // Replace with the correct URL for fingerprint login page
+            } else if (type === 'facial') {
+                window.location.href = 'login(facial).html';  // Replace with the correct URL for facial recognition login page
+            }
+        }
+    </script>
 </body>
 </html>
+
+
+
+
