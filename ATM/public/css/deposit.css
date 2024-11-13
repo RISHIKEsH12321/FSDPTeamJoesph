@@ -1,6 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f0eb !important;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
+    background-size: 50px 50px;
+    margin: 0;
+    padding: 0;
+}
+
 #rectangle{
     width: 35%;          /* Width of the rectangle */
     height: 80px;         /* Height of the rectangle */
     border: 5px solid #000;    /* Border color and thickness */
     margin: 0px auto; 
+}
+
+#headerContainer{
+    padding-top: 30px;
+}
+
+#headerContainer2{
+    padding-top: 30px;
+}
+
+.OptionContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100vw;
+    margin: 0 auto;
+}
+
+.optionButton {
+    width: 300px;
+    height: 350px;
+    border: none;
+    background-color: #fff8f3;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 15px;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+.optionButton:hover {
+    background-color: #e0e0e0;
 }

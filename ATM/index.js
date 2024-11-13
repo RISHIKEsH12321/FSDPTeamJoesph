@@ -87,8 +87,8 @@ app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);
 
 app.get("/userDetails/:userId", user.getUserById);
 app.get("/accountDetails/:userId", account.getAccountsByUserId);
-app.get("/bankTrans/:userId", bankTransaction.getBankTransactionsByUserId);
-app.get("/personalTrans/:userId", nonATMTransaction.getNonATMTransactionsByUserId);
+app.get("/bankTrans/:id", bankTransaction.getBankTransactionsByAccountId);
+app.get("/personalTrans/:id", nonATMTransaction.getNonATMTransactionsByAccountId);
 
 app.get("/graph1", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));

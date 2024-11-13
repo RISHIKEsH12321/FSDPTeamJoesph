@@ -1,10 +1,10 @@
 const BankTransaction = require("../model/Bank_Transactions");
 
-async function getBankTransactionsByUserId(req, res) {
-    const userId = parseInt(req.params.userId);
+async function getBankTransactionsByAccountId(req, res) {
+    const id = parseInt(req.params.id);
 
     try {
-        const transactions = await BankTransaction.getByUserId(userId);
+        const transactions = await BankTransaction.getByAccountId(id);
         if (!transactions || transactions.length === 0) {
             return res.status(404).send("No bank transactions found for this user");
         }
@@ -16,5 +16,5 @@ async function getBankTransactionsByUserId(req, res) {
 }
 
 module.exports = {
-    getBankTransactionsByUserId
+    getBankTransactionsByAccountId
 };

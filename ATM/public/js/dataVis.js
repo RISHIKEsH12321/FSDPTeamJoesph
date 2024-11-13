@@ -8,12 +8,12 @@ let nonAtmTypeMap = {};
 
 document.addEventListener("DOMContentLoaded", async () => {
     disableScroll();
-    const userID = 2; // Adjust userID as needed
+    const accountID = 1; // Adjust accountID as needed
 
     try {
         // Fetch data
-        const bankResponse = await fetch(`/bankTrans/${userID}`);
-        const nonATMResponse = await fetch(`/personalTrans/${userID}`);
+        const bankResponse = await fetch(`/bankTrans/${accountID}`);
+        const nonATMResponse = await fetch(`/personalTrans/${accountID}`);
         const atmTypesResponse = await fetch(`/atmTypes`);
         const nonAtmTypesResponse = await fetch(`/nonAtmTypes`);
 

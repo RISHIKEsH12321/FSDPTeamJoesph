@@ -1,7 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f0eb !important;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
+    background-size: 50px 50px;
+    margin: 0;
+    padding: 0;
+}
+
 #wHint{
     position: absolute;
     top: 50%;
     left: 45%;
+}
+
+#headerContainer{
+    padding-top: 30px;
+}
+
+#headerContainer2{
+    padding-top: 80px;
 }
 
 #dHint{
@@ -21,4 +38,8 @@
     padding: 10px 0px 10px 0px;
     margin-top: 5px;
     font-size: 1.2em;
+}
+
+#buttonsContainer button{
+    background-color: #6c757d;
 }
