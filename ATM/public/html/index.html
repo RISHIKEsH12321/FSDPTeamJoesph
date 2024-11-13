@@ -10,7 +10,7 @@
     <img src="../images/OCBC_logo.png" alt="logo">
     
     <!-- Make the text clickable -->
-    <a href="pin.html" style="text-decoration: none; color: inherit;">
+    <a href="/pin" style="text-decoration: none; color: inherit;">
         <p>Insert bank card to start</p>
     </a>
 
@@ -24,9 +24,9 @@
     <script>
         function navigateToPage(type) {
             if (type === 'fingerprint') {
-                window.location.href = 'fingerprint.html';  // Replace with the correct URL for fingerprint login page
+                window.location.href = '/print';  // Replace with the correct URL for fingerprint login page
             } else if (type === 'facial') {
-                window.location.href = 'login(facial).html';  // Replace with the correct URL for facial recognition login page
+                window.location.href = '/face';  // Replace with the correct URL for facial recognition login page
             }
         }
     </script>
