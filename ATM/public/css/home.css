@@ -9,8 +9,8 @@ body {
 
 #wHint{
     position: absolute;
-    top: 50%;
-    left: 45%;
+    top: 60%;
+    left: 40%;
 }
 
 #headerContainer{
@@ -23,13 +23,13 @@ body {
 
 #dHint{
     position: absolute;
-    top: 35%;
-    left: 45%;
+    top: 50%;
+    left: 55%;
 }
 
 #tHint{
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 55%;
 }
 
