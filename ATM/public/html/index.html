@@ -18,7 +18,12 @@
     <div class="button-container">
         <button class="login-button" id="fingerprint" onclick="navigateToPage('fingerprint')">Continue with Fingerprint</button>
         <button class="login-button" id="facial" onclick="navigateToPage('facial')">Continue with Facial Recognition</button>
+        <button class="login-button" id="startScan">Continue with NFC Login</button>
     </div>
+
+    <!-- NFC Output -->
+    <br><br>
+    <div id="output" style="text-align: center;"></div>
 
     <!-- JavaScript for page navigation -->
     <script>
@@ -30,6 +35,7 @@
             }
         }
     </script>
+    <script src="../js/nfcReader.js"></script>
 </body>
 </html>
 
