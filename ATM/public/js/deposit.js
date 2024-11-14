@@ -43,3 +43,17 @@ function exit(){
     sessionStorage.clear();
     window.location.href="index";
 }
+
+function showTutorial(){
+    const tutorialType = sessionStorage.getItem("tutorialType");
+    console.log("start of function"+tutorialType);
+    if(tutorialType == null || tutorialType =="null"){
+        window.location.href = "tutorial";
+    }else{
+        document.getElementById("tutorial").innerText = "Tutorial";
+        document.getElementById("hint").style.display = "none";
+        document.getElementById("hint2").style.display = "none";
+        sessionStorage.removeItem("tutorialType");
+    }
+    
+}
