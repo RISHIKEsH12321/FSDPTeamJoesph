@@ -28,6 +28,31 @@ class Account {
             throw err;
         }
     }
+
+    static async getEmailByAccountId(accountID) {
+        try {
+            const connection = await sql.connect(dbConfig);
+            const sqlQuery = `
+                SELECT Email FROM Account 
+                WHERE AccountID = @accountID`;
+
+            const request = connection.request();
+            request.input("accountID", sql.Int, accountID);
+
+            const result = await request.query(sqlQuery);
+            connection.close();
+
+            if (result.recordset.length > 0) {
+                return result.recordset[0].Email;
+            } else {
+                return null;  // Return null if no matching account is found
+            }
+        } catch (err) {
+            console.log("Error retrieving email by account ID", err);
+            throw err;
+        }
+    }
+
 }
 
 module.exports = Account;

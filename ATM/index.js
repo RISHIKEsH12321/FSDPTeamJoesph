@@ -81,7 +81,7 @@ app.get('/transferFunds', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "transferFunds.html"));
 });
 
-
+//Data Routes (Rishikesh)
 app.get("/atmTypes", atmTypes.getATMTransactionTypes);
 app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);
 
@@ -89,11 +89,14 @@ app.get("/userDetails/:userId", user.getUserById);
 app.get("/accountDetails/:userId", account.getAccountsByUserId);
 app.get("/bankTrans/:id", bankTransaction.getBankTransactionsByAccountId);
 app.get("/personalTrans/:id", nonATMTransaction.getNonATMTransactionsByAccountId);
+app.get("/accountEmail/:accountId", account.getEmailByAccountId);
 
+//Pages Routes (Rishikesh)
 app.get("/graph1", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));
 });
 
+//Email Routes (Rishikesh)
 app.post('/send-pdf/', async (req, res) => {
     const { email, pdfData } = req.body;
     console.log("Sending Email ZIP...");

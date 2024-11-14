@@ -15,6 +15,22 @@ async function getAccountsByUserId(req, res) {
     }
 }
 
+async function getEmailByAccountId(req, res) {
+    const accountId = parseInt(req.params.accountId);
+
+    try {
+        const email = await Account.getEmailByAccountId(accountId);
+        if (!email) {
+            return res.status(404).send("No email found for this account ID");
+        }
+        res.status(200).json({ email });
+    } catch (error) {
+        console.error("Error retrieving email by account ID:", error);
+        res.status(500).send("Error retrieving email");
+    }
+}
+
 module.exports = {
-    getAccountsByUserId
+    getAccountsByUserId,
+    getEmailByAccountId
 };
