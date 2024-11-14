@@ -1,14 +1,17 @@
+// const e = require("express");
+
 let bankTransactions = [];
 let nonATMTransactions = [];
 let atmTypes = [];
 let nonAtmTypes = [];
 let atmTypeMap = {};
 let nonAtmTypeMap = {};
-
+//Hard coded Account ID
+const accountID = 1;
 
 document.addEventListener("DOMContentLoaded", async () => {
     disableScroll();
-    const accountID = 1; // Adjust accountID as needed
+     // Adjust accountID as needed
 
     try {
         // Fetch data
@@ -16,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const nonATMResponse = await fetch(`/personalTrans/${accountID}`);
         const atmTypesResponse = await fetch(`/atmTypes`);
         const nonAtmTypesResponse = await fetch(`/nonAtmTypes`);
-
+        const email = await fetch(`/accountEmail/${accountID}`)
         if (!bankResponse.ok || !nonATMResponse.ok || !atmTypesResponse.ok || !nonAtmTypesResponse.ok) {
             throw new Error("Network response was not ok");
         }
@@ -513,6 +516,12 @@ async function generateFinancialReportPDF() {
     // link.download = "Financial_Summary_Report.zip";
     // link.click();
 
+    const emailResponse = await fetch(`/accountEmail/${accountID}`)
+    if (!emailResponse.ok) {
+        throw new Error("Network response was not ok");
+    }
+    let email = await emailResponse.json();
+
     const reader = new FileReader();
     reader.readAsDataURL(zipBlob);
     reader.onloadend = async function () {
@@ -524,7 +533,7 @@ async function generateFinancialReportPDF() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: 'rishi070606@gmail.com',
+                email: email.email,
                 zipData: base64Data
             })
         })
