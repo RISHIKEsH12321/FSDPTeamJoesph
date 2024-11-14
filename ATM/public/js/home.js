@@ -55,7 +55,7 @@ function showMoreService() {
 
     tHint = document.getElementById("tHint")
     tHint.style.position = "absolute";
-    tHint.style.top = "50%";
+    tHint.style.top = "60%";
     tHint.style.left = "10%"; 
 }
 
