@@ -178,12 +178,14 @@ app.post('/send-zip/', async (req, res) => {
     }
 });
 
-
-
-
+app.post("/validate-pin", account.validatePinController);
 
 app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
+});
+
+app.get("/finger", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "finger.html"));
 });
 
 app.get("/pin", (req, res) => {

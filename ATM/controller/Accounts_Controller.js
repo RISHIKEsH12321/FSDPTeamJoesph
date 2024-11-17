@@ -30,7 +30,46 @@ async function getEmailByAccountId(req, res) {
     }
 }
 
+const validatePinController = async (req, res) => {
+    const { pin } = req.body;
+  
+    if (!pin || pin.length !== 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request. A 6-digit PIN is required.",
+      });
+    }
+  
+    try {
+      // Use getUserByPin to find the account
+      const account = await Account.getUserByPin(pin);
+  
+      if (account) {
+        res.status(200).json({
+          success: true,
+          message: "PIN validated successfully!",
+          data: {
+            userID: account.userID,
+            accountNumber: account.accountNumber,
+          },
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          message: "Invalid PIN. Please try again.",
+        });
+      }
+    } catch (err) {
+      console.error("Error validating PIN:", err);
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error.",
+      });
+    }
+};
+
 module.exports = {
     getAccountsByUserId,
-    getEmailByAccountId
+    getEmailByAccountId,
+    validatePinController
 };
