@@ -57,6 +57,8 @@ transferForm.addEventListener("click",async()=>{
         const response = await fetch(`/transferFunds/${accNo}`);
         const result = await response.json();
 
+        document.getElementById("name").textContent = sessionStorage.getItem("name");
+        document.getElementById("myAccNo").textContent = sessionStorage.getItem("myAccNo");
         document.getElementById("toName").textContent = result[0].name;
         document.getElementById("toAccNo").textContent = result[0].accountNumber;
         document.getElementById("amount").textContent = amount;
