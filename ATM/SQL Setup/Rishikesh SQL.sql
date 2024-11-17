@@ -8,6 +8,12 @@ DROP TABLE IF EXISTS Account;
 DROP TABLE IF EXISTS Users;
 */ 
 
+CREATE TABLE UserFaces (
+    FaceID INT PRIMARY KEY IDENTITY(1, 1),
+    UserID INT NOT NULL,
+    face_embedding TEXT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY Identity(1, 1),

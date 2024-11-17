@@ -25,6 +25,7 @@ const nonATMTransaction = require("./controller/Non_ATM_Transactions_Controller"
 const atmTypes = require("./controller/ATM_Transaction_Type_Controller");
 const nonAtmTypes = require("./controller/Non_ATM_Transaction_Type_Controller");
 const aiReport = require("./controller/Gemini_Controller");
+const faceID = require("./controller/UserFaceController");
 
 app.use("/",express.static("public")); //Static Files start from public 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -178,7 +179,17 @@ app.post('/send-zip/', async (req, res) => {
     }
 });
 
+app.post('/loginWithFace', faceID.loginWithFace);
+app.post("/addfacetouser", faceID.addFace);
+app.get("/getStoredFaceDescriptors", faceID.getStoredFaceDescriptors);
 
+app.get("/addFace", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "createfaceid.html"));
+});
+
+app.get("/loginFace", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "faceid.html"));
+});
 
 
 
