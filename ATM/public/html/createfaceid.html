@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Recognition Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #video {
+            border: 1px solid black;
+            margin-bottom: 20px;
+        }
+
+        #canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Facial Recognition Login</h1>
+
+    <input type="number" id="userID" placeholder="Enter your User ID" required>
+    <br><br>
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <button id="startScanBtn">Start Scanning</button>
+    <button id="saveFaceBtn" style="display: none;">Save Face</button>
+
+    <script src="../js/createfaceid.js"></script>  <!-- Move this to the bottom -->
+    <script src="../face-api.js"></script>
+
+</body>
+</html>
