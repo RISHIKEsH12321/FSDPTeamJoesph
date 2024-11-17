@@ -493,16 +493,36 @@ async function generateFinancialReportPDF() {
         if (canvas) {
             await new Promise(resolve => setTimeout(resolve, 500));
             const chartImage = await html2canvas(canvas).then(canvas => canvas.toDataURL("image/png"));
-            const chartHeight = 80;
-            doc.addImage(chartImage, 'PNG', (pageWidth - (pageWidth * 0.8)) / 2, yOffset, pageWidth * 0.8, chartHeight);
-            yOffset += chartHeight + 10;  // Add smaller spacing below each chart
-
+    
+            // Dimensions of the chart on the canvas
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+    
+            // Maintain aspect ratio
+            let chartWidth = pageWidth * 0.8;  // Default width is 80% of page width
+            let chartHeight = (canvasHeight / canvasWidth) * chartWidth;  // Maintain aspect ratio
+    
+            // Special case for "duplicate-chart2"
+            if (chartId === "duplicate-chart2") {
+                chartWidth = 100;
+                chartHeight = 100;  // Fixed size
+            }
+    
+            // Check if the image fits the current page; if not, add a new page
             if (yOffset + chartHeight > pageHeight - 20) {  // Account for margin
                 doc.addPage();
                 yOffset = 20;  // Reset yOffset for new page with margin
             }
+    
+            // Add the chart image to the PDF
+            const xPosition = (pageWidth - chartWidth) / 2;  // Center horizontally
+            doc.addImage(chartImage, 'PNG', xPosition, yOffset, chartWidth, chartHeight);
+    
+            // Update yOffset for the next chart
+            yOffset += chartHeight + 10;  // Add smaller spacing below each chart
         }
     }
+    
 
     // Show the loading animation and overlay
     document.getElementById("loading-animation").style.display = "block";
@@ -529,11 +549,12 @@ async function generateFinancialReportPDF() {
     const logo = new Image();
     logo.src = "../images/OCBC_logo.png";
     await new Promise((resolve) => (logo.onload = resolve));
-    doc.addImage(logo, "PNG", (pageWidth - 50) / 2, 50, 50, 50);  // Centered logo on the first page
+    doc.addImage(logo, "PNG", (pageWidth - 100) / 2, (pageHeight - 50) / 2, 100, 50);  // Centered logo on the first page
     doc.addPage();  // Start a new page after the logo
 
     let yOffset = 20;  // Starting y-offset with a smaller margin
     
+
     // Title and Financial Status
     doc.setFontSize(16);
     doc.text("Financial Summary Report", 10, yOffset);
@@ -585,8 +606,8 @@ async function generateFinancialReportPDF() {
     const zipBlob = await compressPDFToZip(pdfBlob);
 
     // const link = document.createElement("a");
-    // link.href = URL.createObjectURL(zipBlob);
-    // link.download = "Financial_Summary_Report.zip";
+    // link.href = URL.createObjectURL(pdfBlob);
+    // link.download = "Financial_Summary_Report.pdf";
     // link.click();
 
     const emailResponse = await fetch(`/accountEmail/${accountID}`)

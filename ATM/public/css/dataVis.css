@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f7f0eb;
+    background-color: #ececec;
     background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
     background-size: 50px 50px;
     margin: 0;
@@ -68,13 +68,6 @@ h1 {
     position: relative;    
 }
 
-.chart-card:hover{    
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
-}
-
-.chart-card:hover p{
-    transform: scale(1.15);
-}
 
 .chart-card p {
     color: #000000; /* OCBC red for text */
@@ -159,19 +152,10 @@ h1 {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-#reportBtn:hover {
-    background-color: #CC0000;
-    transform: translateY(-2px);
-}
 
 #reportBtn:active {
     background-color: #990000;
     transform: translateY(1px);
-}
-
-#reportBtn:hover {
-    background-color: rgba(252, 47, 47, 0.866);
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
 }
 
 #reportBtn:active {
