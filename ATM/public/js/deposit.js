@@ -31,6 +31,8 @@ function page3(){
     document.getElementById("title").textContent = "Deposit confirmation"
     document.getElementById("page2").style.cssText = "display: none !important";
     document.getElementById("page3").style.cssText = "display: block !important";
+    document.getElementById("name").textContent = sessionStorage.getItem("name");
+    document.getElementById("myAccNo").textContent = sessionStorage.getItem("myAccNo");
     if(tutorialType == "deposit"){
         const hintDiv = document.getElementById("hint2");
         hintDiv.innerHTML=`

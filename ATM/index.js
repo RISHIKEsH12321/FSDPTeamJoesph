@@ -66,11 +66,15 @@ app.get("/testPage", async (req, res) => {
         sql.close();
     }
 });
+
+//Joseph
+app.get('/home/:userId', account.getAccountsByUserId);
+app.get('/transferFunds/:accNo', account.getAccountByAccNo);
 app.get('/home', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "home.html"));
-  });
+});
 app.get('/tutorial', (req, res) => {
-res.sendFile(path.join(__dirname, "public", "html", "tutorial.html"));
+    res.sendFile(path.join(__dirname, "public", "html", "tutorial.html"));
 });
 app.get('/deposit', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "deposit.html"));
