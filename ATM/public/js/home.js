@@ -1,3 +1,27 @@
+const accountId = 4;
+let accountData = []; //store data
+
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Fetch data
+        const accountRes = await fetch(`/home/${accountId}`);
+        
+        accountData = await accountRes.json();
+        sessionStorage.setItem('name', accountData[0].name);
+        sessionStorage.setItem('myAccNo', accountData[0].accountNumber);
+        console.log(sessionStorage.getItem('name'));
+        console.log(sessionStorage.getItem('myAccNo'));
+
+
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+    }
+});
+
+
 document.getElementById("moreService").style.cssText = "display: none !important";
 document.getElementById("deposit").style.cssText = "display: none !important";
 window.onload = function() {
