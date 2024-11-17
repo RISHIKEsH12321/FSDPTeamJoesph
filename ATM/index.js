@@ -197,6 +197,8 @@ app.get("/loginFace", (req, res) => {
 
 
 
+app.post("/validate-pin", account.validatePinController);
+
 app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
 });
