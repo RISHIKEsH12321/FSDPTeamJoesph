@@ -7,6 +7,16 @@ body {
     padding: 0;
 }
 
+#logo{
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 200px; 
+    height: auto; 
+    z-index: 1000;
+}
+
+
 .btn.btn-secondary{
     width: 100%;
     border: none;
@@ -24,8 +34,14 @@ body {
 
 #tutorial{
     cursor: pointer;
+    font-size: 20px;
 }
 
 #exit{
     cursor: pointer;
+    font-size: 20px;
+}
+
+#headerContainer3{
+    padding-top: 26px;
 }
