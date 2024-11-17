@@ -67,12 +67,4 @@ class Account {
             const result = await request.query(sqlQuery);
             connection.close();
 
-            return result.recordset.map(row => new Account(row.AccountID, row.UserID, row.Account_Number, row.Account_PIN,row.Name));
-        } catch (err) {
-            console.log("Error retrieving accounts by user ID", err);
-            throw err;
-        }
-    }
-}
-
 module.exports = Account;

@@ -201,6 +201,10 @@ app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
 });
 
+app.get("/finger", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "finger.html"));
+});
+
 app.get("/pin", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "pin.html"));
 });

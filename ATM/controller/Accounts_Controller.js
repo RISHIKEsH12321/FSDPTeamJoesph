@@ -45,6 +45,7 @@ async function getAccountByAccNo(req, res) {
     }
 }
 
+
 module.exports = {
     getAccountsByUserId,
     getEmailByAccountId,
