@@ -605,10 +605,10 @@ async function generateFinancialReportPDF() {
     const pdfBlob = doc.output("blob");
     const zipBlob = await compressPDFToZip(pdfBlob);
 
-    // const link = document.createElement("a");
-    // link.href = URL.createObjectURL(pdfBlob);
-    // link.download = "Financial_Summary_Report.pdf";
-    // link.click();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(pdfBlob);
+    link.download = "Financial_Summary_Report.pdf";
+    link.click();
 
     const emailResponse = await fetch(`/accountEmail/${accountID}`)
     if (!emailResponse.ok) {

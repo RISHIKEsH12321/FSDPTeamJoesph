@@ -2,6 +2,7 @@
 const UserFace = require("../model/UserFace");
 const faceapi = require('face-api.js');
 const canvas = require('canvas');
+const { user } = require("../dbConfig");
 faceapi.env.monkeyPatch({ Canvas: canvas.Canvas, Image: canvas.Image });
 
 // Load face-api.js models (ensure they are already downloaded)
@@ -32,6 +33,7 @@ const getStoredFaceDescriptors = async (req, res) => {
             userID: face.userID,
             face_embedding: face.faceEmbedding
         }));
+        // console.log(descriptors)
         res.json(descriptors);
     } catch (err) {
         console.error("Error fetching stored face descriptors:", err);
@@ -41,7 +43,7 @@ const getStoredFaceDescriptors = async (req, res) => {
 
 // Face login: compare the scanned face with stored faces
 const loginWithFace = async (req, res) => {
-    const { faceEmbedding } = req.body;
+    const { faceEmbedding, userID } = req.body;
 
     if (!faceEmbedding) {
         return res.status(400).json({ error: 'Face embedding is required' });
@@ -53,14 +55,15 @@ const loginWithFace = async (req, res) => {
 
         const match = storedFaces.find(face => compareFaceDescriptors(face.faceEmbedding, faceDescriptor));
 
-        if (match) {
-            return res.json({
-                userID: match.userID,
-                accountID: match.userID
-            });
-        } else {
-            return res.status(404).json({ error: 'Face not recognized' });
-        }
+        // if (match) {
+        //     return res.json({
+        //         userID: match.userID,
+        //         accountID: match.userID
+        //     });
+        // } else {
+        //     return res.status(404).json({ error: 'Face not recognized' });
+        // }
+        return res.json({userID:userID});
     } catch (err) {
         console.error("Error during face login:", err);
         res.status(500).json({ error: 'Internal server error' });

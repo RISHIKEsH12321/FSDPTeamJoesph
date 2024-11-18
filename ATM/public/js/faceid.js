@@ -1,3 +1,5 @@
+// const { user } = require("../../dbConfig");
+
 // createFaceID.js
 document.addEventListener('DOMContentLoaded', () => {
     let video = document.getElementById('video');
@@ -42,20 +44,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function matchFace() {
         if (!faceDescriptor) return;
-        console.log(faceDescriptor)
+        // console.log("Current", faceDescriptor)
+
         let bestMatch = null;
         let bestMatchDistance = Infinity;
+        // console.log("First", knownEmbeddings[0]);
+        // console.log("Second", knownEmbeddings[1]);
+        
+
 
         knownEmbeddings.forEach((embedding, index) => {
-            console.log(embedding)
+            console.log(`Comparing with embedding [${index}]`);
             const distance = faceapi.euclideanDistance(faceDescriptor, embedding);
+            console.log(`Distance: ${distance}`);
             if (distance < bestMatchDistance) {
                 bestMatchDistance = distance;
                 bestMatch = knownUserIDs[index];
             }
         });
+        console.log("Best match:", bestMatch, "Distance:", bestMatchDistance);
+        
+        console.log("knownUserIDs", knownUserIDs);
 
-        if (bestMatch && bestMatchDistance < 0.99) {
+        console.log("Bestmatch", bestMatch);
+        console.log("bestMatchDistance", bestMatchDistance);
+        if (bestMatch && bestMatchDistance < 0.3) { // Adjusted threshold
             loginUser(bestMatch);
         } else {
             alert("No matching face found.");
@@ -68,11 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor) })
+            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor), userID:userID   })
         })
         .then(response => response.json())
         .then(data => {
             if (data.userID) {
+                console.log("LOGGED IN WITH user id: " + data.userID)
                 document.getElementById('loginInfo').innerText = `Welcome back, User ID: ${data.userID}`;
             } else {
                 alert("Error: No user ID returned.");
@@ -108,13 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
         scanningInterval = setInterval(scanFace, 100); // Continuously scan
     });
 
-    document.getElementById('stopScanBtn').addEventListener('click', () => {
-        // Stop scanning
-        if (scanningInterval) {
-            clearInterval(scanningInterval);
-            console.log("Face scanning stopped.");
-        }
-    });
+    // document.getElementById('stopScanBtn').addEventListener('click', () => {
+    //     // Stop scanning
+    //     if (scanningInterval) {
+    //         clearInterval(scanningInterval);
+    //         console.log("Face scanning stopped.");
+    //     }
+    // });
 
     loadModels();
 });
