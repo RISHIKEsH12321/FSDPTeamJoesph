@@ -1,6 +1,3 @@
-// const { user } = require("../../dbConfig");
-
-// createFaceID.js
 document.addEventListener('DOMContentLoaded', () => {
     let video = document.getElementById('video');
     let canvas = document.getElementById('canvas');
@@ -8,10 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let knownEmbeddings = [];
     let knownUserIDs = [];
     let scanningInterval;
+    let isLoggedIn = false;  // Flag to track if the user is logged in
 
     async function loadModels() {
         try {
-            // Update to use loadFromUri instead of loadFromDisk for browser environment
             await faceapi.nets.ssdMobilenetv1.loadFromUri('/model');
             await faceapi.nets.faceRecognitionNet.loadFromUri('/model');
             await faceapi.nets.faceLandmark68Net.loadFromUri('/model');
@@ -23,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function startWebcam() {
+        if (isLoggedIn) return; // Prevent starting the webcam if already logged in
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
             video.srcObject = stream;
@@ -33,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function scanFace() {
+        if (isLoggedIn) return; // Prevent scanning if already logged in
         const detections = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
         if (detections) {
             faceDescriptor = detections.descriptor;
@@ -43,32 +42,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function matchFace() {
+        if (isLoggedIn) return; // Prevent matching if already logged in
         if (!faceDescriptor) return;
-        // console.log("Current", faceDescriptor)
 
         let bestMatch = null;
         let bestMatchDistance = Infinity;
-        // console.log("First", knownEmbeddings[0]);
-        // console.log("Second", knownEmbeddings[1]);
-        
-
 
         knownEmbeddings.forEach((embedding, index) => {
-            console.log(`Comparing with embedding [${index}]`);
             const distance = faceapi.euclideanDistance(faceDescriptor, embedding);
-            console.log(`Distance: ${distance}`);
             if (distance < bestMatchDistance) {
                 bestMatchDistance = distance;
                 bestMatch = knownUserIDs[index];
             }
         });
-        console.log("Best match:", bestMatch, "Distance:", bestMatchDistance);
-        
-        console.log("knownUserIDs", knownUserIDs);
 
-        console.log("Bestmatch", bestMatch);
-        console.log("bestMatchDistance", bestMatchDistance);
-        if (bestMatch && bestMatchDistance < 0.3) { // Adjusted threshold
+        if (bestMatch && bestMatchDistance < 0.6) { // Adjusted threshold
             loginUser(bestMatch);
         } else {
             alert("No matching face found.");
@@ -76,18 +64,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loginUser(userID) {
+        if (isLoggedIn) return; // Prevent calling loginUser again if already logged in
+
         fetch('/loginWithFace', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor), userID:userID   })
+            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor), userID:userID })
         })
         .then(response => response.json())
         .then(data => {
             if (data.userID) {
-                console.log("LOGGED IN WITH user id: " + data.userID)
+                console.log("LOGGED IN WITH user id: " + data.userID);
                 document.getElementById('loginInfo').innerText = `Welcome back, User ID: ${data.userID}`;
+
+                // Fetch the user details using the userID
+                getUserDetails(data.userID).then(userDetails => {
+                    if (userDetails) {
+                        console.log("User Details:", userDetails);
+                        
+                        // Store the user details in localStorage
+                        localStorage.setItem('userdetails', JSON.stringify(userDetails));
+
+                        // Mark the user as logged in and prevent further scanning
+                        isLoggedIn = true;
+
+                        // Redirect to the /home page
+                        window.location.href = '/home';
+                    }
+                });
             } else {
                 alert("Error: No user ID returned.");
             }
@@ -113,6 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     document.getElementById('startScanBtn').addEventListener('click', () => {
+        // If already logged in, prevent starting the scan again
+        if (isLoggedIn) {
+            alert("You are already logged in.");
+            return;
+        }
+
         // Check if already scanning
         if (scanningInterval) {
             clearInterval(scanningInterval);
@@ -122,13 +134,31 @@ document.addEventListener('DOMContentLoaded', () => {
         scanningInterval = setInterval(scanFace, 100); // Continuously scan
     });
 
-    // document.getElementById('stopScanBtn').addEventListener('click', () => {
-    //     // Stop scanning
-    //     if (scanningInterval) {
-    //         clearInterval(scanningInterval);
-    //         console.log("Face scanning stopped.");
-    //     }
-    // });
+    // Fetch user details from backend using userID
+    function getUserDetails(userID) {
+        return fetch(`/userDetails/${userID}`)
+            .then(response => {
+                console.log(`Fetching user details for userID: ${userID}. Status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch user details. Status: ${response.status}`);
+                }
+                return response.json();  // This should now return the plain object
+            })
+            .then(data => {
+                if (data) {
+                    console.log("User Details:", data);
+                    return data;  // Return the user details as a plain object
+                } else {
+                    throw new Error("User details not found in the response.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching user details:", error);
+                alert("Failed to fetch user details.");
+                return null;  // Return null if there was an error
+            });
+    }
 
     loadModels();
 });

@@ -8,7 +8,9 @@ async function getUserById(req, res) {
         if (!user || user.length === 0) {
             return res.status(404).send("User not found");
         }
-        res.status(200).json(user);
+        const userData = user[0].toJSON ? user[0].toJSON() : user[0];
+
+        res.status(200).json(userData);
     } catch (error) {
         console.error(error);
         res.status(500).send("Error retrieving user");
