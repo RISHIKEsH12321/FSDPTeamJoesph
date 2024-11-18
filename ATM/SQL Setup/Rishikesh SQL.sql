@@ -76,11 +76,13 @@ CREATE TABLE Non_ATM_Transactions (
 --Test Data
 INSERT INTO Users (Date_Joined, Phone_Number, NRIC) VALUES
 ('2023-01-15', '12345678', 'S1234567A'),
-('2023-03-20', '87654321', 'S7654321B');
+('2023-03-20', '87654321', 'S7654321B'),
+('2023-03-20', '87654321', 'S7654321C'); -- added for testing pin
 
 INSERT INTO Account (UserID, Account_Number, Account_PIN, Email) VALUES
 (1, '1234567890123456', 'hashed_pin_1', 'rishi070606@gmail.com'), 
 (2, '6543210987654321', 'hashed_pin_2', 'rishi070606@gmail.com');
+(3, '6543210987654327', 123456, 'rishi070606@gmail.com'); -- added for testing pin
 
 INSERT INTO ATM_Transaction_Type (TypeName) VALUES
 ('Withdrawal'), ('Deposit'), ('Transfer');

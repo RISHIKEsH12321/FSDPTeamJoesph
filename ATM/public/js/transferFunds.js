@@ -45,3 +45,25 @@ function exit(){
     sessionStorage.clear();
     window.location.href="index";
 }
+
+
+const transferForm = document.getElementById("transferSubmit");
+transferForm.addEventListener("click",async()=>{
+    //Add function to update text and sql database
+    const accNo = document.getElementById("AccountNo").value;
+    const amount = document.getElementById("amt").value;
+    console.log(accNo + "," + amount);
+    try {
+        const response = await fetch(`/transferFunds/${accNo}`);
+        const result = await response.json();
+
+        document.getElementById("name").textContent = sessionStorage.getItem("name");
+        document.getElementById("myAccNo").textContent = sessionStorage.getItem("myAccNo");
+        document.getElementById("toName").textContent = result[0].name;
+        document.getElementById("toAccNo").textContent = result[0].accountNumber;
+        document.getElementById("amount").textContent = amount;
+    }catch (error) {
+        console.error('Error fetching posts:', error);
+    }
+
+});
