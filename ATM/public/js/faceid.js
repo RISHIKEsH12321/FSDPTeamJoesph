@@ -64,45 +64,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loginUser(userID) {
-        if (isLoggedIn) return; // Prevent calling loginUser again if already logged in
-
+        if (isLoggedIn) return; // Prevent duplicate logins
+        isLoggedIn = true; // Set to true immediately to prevent race conditions
+    
         fetch('/loginWithFace', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor), userID:userID })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ faceEmbedding: JSON.stringify(faceDescriptor), userID: userID }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.userID) {
-                console.log("LOGGED IN WITH user id: " + data.userID);
-                document.getElementById('loginInfo').innerText = `Welcome back, User ID: ${data.userID}`;
-
-                // Fetch the user details using the userID
-                getUserDetails(data.userID).then(userDetails => {
-                    if (userDetails) {
-                        console.log("User Details:", userDetails);
-                        
-                        // Store the user details in localStorage
-                        localStorage.setItem('userdetails', JSON.stringify(userDetails));
-
-                        // Mark the user as logged in and prevent further scanning
-                        isLoggedIn = true;
-
-                        // Redirect to the /home page
-                        window.location.href = '/home';
-                    }
-                });
-            } else {
-                alert("Error: No user ID returned.");
-            }
-        })
-        .catch(err => {
-            console.error("Error logging in:", err);
-            alert("Failed to log in.");
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.userID) {
+                    console.log("LOGGED IN WITH user id: " + data.userID);
+                    document.getElementById('loginInfo').innerText = `Welcome back, User ID: ${data.userID}`;
+    
+                    // Fetch user details after login
+                    return getUserDetails(data.userID).then((userDetails) => {
+                        if (userDetails) {
+                            console.log("User Details:", userDetails);
+    
+                            // Store the user details in localStorage
+                            localStorage.setItem('userdetails', JSON.stringify(userDetails));
+    
+                            // Redirect to the /home page
+                            window.location.href = '/home';
+                        }
+                    });
+                } else {
+                    alert("Error: No user ID returned.");
+                }
+            })
+            .catch((err) => {
+                console.error("Error logging in:", err);
+                alert("Failed to log in.");
+                isLoggedIn = false; // Reset flag if login fails
+            });
     }
+    
 
     // Fetch known faces from backend
     fetch('/getStoredFaceDescriptors')
@@ -147,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 if (data) {
-                    console.log("User Details:", data);
+                    // console.log("User Details:", data);
                     return data;  // Return the user details as a plain object
                 } else {
                     throw new Error("User details not found in the response.");

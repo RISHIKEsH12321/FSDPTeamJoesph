@@ -1,68 +1,105 @@
 document.addEventListener('DOMContentLoaded', () => {
     let faceDescriptor; // Stores the face embedding
-    console.log(1);
+
+    const userID = getUserIDFromLocalStorage();
+
+    console.log(userID);
 
     // Load models for face-api.js
     async function loadModels() {
-        // Update to use loadFromUri instead of loadFromDisk for browser environment
         await faceapi.nets.ssdMobilenetv1.loadFromUri('/model');
         await faceapi.nets.faceRecognitionNet.loadFromUri('/model');
         await faceapi.nets.faceLandmark68Net.loadFromUri('/model');
         console.log("Models loaded successfully!");
+        updateSituation("Models loaded successfully!");
     }
-    
 
     // Start the webcam and show the video
     async function startWebcam() {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-        video.srcObject = stream;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
+            updateSituation("Webcam started. Please position your face in front of the camera.");
+        } catch (error) {
+            console.error("Error starting webcam:", error);
+            updateSituation("Failed to access the webcam. Please check your device permissions.");
+        }
     }
 
     // Detect faces, landmarks, and generate embeddings
     async function scanFace() {
         const detections = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
-        console.log(detections);  // Log detections to ensure that face detection is working
         if (detections) {
             canvas.style.display = 'block';
             faceapi.matchDimensions(canvas, video);
-            console.log(1); 
             const resizedDetections = faceapi.resizeResults(detections, video);
             faceapi.draw.drawDetections(canvas, resizedDetections);
             faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-            console.log(2); 
+
             faceDescriptor = detections.descriptor;
-            console.log(faceDescriptor);  // Log the face descriptor
             saveFaceBtn.style.display = 'inline';
-            console.log('Save Face button should be visible now.');
+            updateSituation("Face detected! You can now save your face.");
         } else {
-            alert("No face detected! Please try again.");
+            updateSituation("No face detected! Please try again.");
         }
     }
-    
 
     // Save face embedding to the database
     async function saveFace() {
-        console.log(1);
-        const userID = document.getElementById('userID').value;
+        console.log("saveFace.")
+
         if (!userID || !faceDescriptor) {
-            alert("Please enter a valid User ID and scan your face.");
+            console.log("Please scan your face first and ensure a valid User ID is available.")
+            updateSituation("Please scan your face first and ensure a valid User ID is available.");
             return;
         }
 
         const faceEmbedding = JSON.stringify(Array.from(faceDescriptor)); // Convert the face descriptor to an array
 
-        const response = await fetch('/addfacetouser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userID: userID, faceEmbedding: faceEmbedding })
-        });
+        try {
+            const response = await fetch('/addfacetouser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userID: userID, faceEmbedding: faceEmbedding })
+            });
 
-        if (response.ok) {
-            alert("Face saved successfully!");
+            if (response.ok) {
+                console.log("Face saved successfully!")
+                updateSituation("Face saved successfully!");
+            } else {
+                updateSituation("Error saving face. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error saving face:", error);
+            updateSituation("Failed to save face. Please try again later.");
+        }
+    }
+
+    // Update the situation message
+    function updateSituation(message) {
+        const situationElement = document.getElementById('situation');
+        if (situationElement.innerHTML != "Face saved successfully!"){
+            situationElement.innerText = message;
+        }
+        
+    }
+
+    // Retrieve User ID from localStorage
+    function getUserIDFromLocalStorage() {
+        const userDetails = localStorage.getItem('userdetails');
+        if (userDetails) {
+            try {
+                const user = JSON.parse(userDetails);
+                return user.userID || null;
+            } catch (error) {
+                console.error("Error parsing user details from localStorage:", error);
+                return null;
+            }
         } else {
-            alert("Error saving face. Please try again.");
+            console.warn("No user details found in localStorage.");
+            return null;
         }
     }
 

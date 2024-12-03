@@ -1,12 +1,18 @@
 const accountId = 4;
 let accountData = []; //store data
-
+let userID = 0;
 
 
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         // Fetch data
+
+        
+        userID = getUserIDFromLocalStorage();
+        editGreeting(userID);
+
+
         const accountRes = await fetch(`/home/${accountId}`);
         
         accountData = await accountRes.json();
@@ -105,3 +111,35 @@ function gotoDeposit(){
     window.location.href="deposit";
 }
 
+
+
+function getUserIDFromLocalStorage() {    
+    const userDetails = localStorage.getItem('userdetails');
+    if (userDetails) {
+        try {
+            const user = JSON.parse(userDetails);
+            return user.userID || null;
+        } catch (error) {
+            console.error("Error parsing user details from localStorage:", error);
+            return null;
+        }
+    } else {
+        console.warn("No user details found in localStorage.");
+        return null;
+    }
+}
+
+function editGreeting(userID){
+    const greeting = document.getElementById("greeting");
+    switch (userID) {
+        case 1:
+            greeting.innerText = "Hello Johnathan!";
+            break;
+        case 2:
+            greeting.innerText = "Hello Lily!";
+            break;
+        default:
+            greeting.innerText = "Hello!";
+            break;
+    }
+}

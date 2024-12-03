@@ -44,7 +44,7 @@ const getStoredFaceDescriptors = async (req, res) => {
 // Face login: compare the scanned face with stored faces
 const loginWithFace = async (req, res) => {
     const { faceEmbedding, userID } = req.body;
-
+    console.log("23123")
     if (!faceEmbedding) {
         return res.status(400).json({ error: 'Face embedding is required' });
     }
