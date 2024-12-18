@@ -133,7 +133,7 @@ function editGreeting(userID){
     const greeting = document.getElementById("greeting");
     switch (userID) {
         case 1:
-            greeting.innerText = "Hello Johnathan!";
+            greeting.innerText = "Hello Rishikesh!";
             break;
         case 2:
             greeting.innerText = "Hello Lily!";
