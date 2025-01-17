@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fingerprint Authentication</title>
+    <style>
+        /* Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #auth-container {
+            text-align: center;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="auth-container">
+        <h1>Fingerprint Authentication</h1>
+        <button onclick="startAuthentication()">Authenticate with Fingerprint</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        async function startAuthentication() {
+            // Placeholder for a real challenge from the server
+            const challenge = new Uint8Array(32);
+            window.crypto.getRandomValues(challenge);
+
+            // Public key credential options
+            const publicKey = {
+                challenge: challenge,
+                rp: { name: "Example App" },
+                user: {
+                    id: new Uint8Array(16), // Should be a unique ID for each user
+                    name: "user@example.com",
+                    displayName: "User Example"
+                },
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }], // -7 stands for "ES256" algorithm
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform", // This specifies a platform authenticator, such as a fingerprint sensor on the device
+                    userVerification: "required"
+                },
+                timeout: 60000,
+                attestation: "direct"
+            };
+
+            try {
+                // Create a credential using WebAuthn
+                const credential = await navigator.credentials.create({ publicKey });
+                document.getElementById("status").textContent = "Fingerprint registered successfully!";
+                console.log("Credential:", credential);
+
+                // Send credential to server for validation (not implemented here)
+            } catch (error) {
+                document.getElementById("status").textContent = "Authentication failed or was canceled.";
+                console.error("Error:", error);
+            }
+        }
+    </script>
+</body>
+</html>

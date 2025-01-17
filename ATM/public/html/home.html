@@ -8,24 +8,29 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/commonTutorial.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="../js/voiceActivate.js" defer></script>
 </head>
 <body>
+    <a href="/home"><img id="logo" src="../images/OCBC_logo.png" title="OCBC Logo"></a>
     <!-- Top/header section -->
     <div class="container mt-3" id="headerContainer">
         <div class="d-flex justify-content-between">
             <div class="flex-grow-1" id="headerContainer2">
-                <h2>Hello!</h2>
+                <h2 id ="greeting">Hello!</h2>
                 <h3>What would you like to do today?</h3>
             </div>
-            <div class="d-flex flex-grow-0" >
+            <div class="d-flex flex-grow-0">
                 <p id="tutorial" onclick="showTutorial()" class="mb-0 px-2">Tutorial</p>
                 <br>
+
                 <span class="separator">|</span>
+
                 <br>
                 <p id="exit" onclick="exit()" class="mb-0 px-2">Exit</p>
             </div>
         </div>
     </div>
+
     <select id="languageSelector">
         <option value="EN">English</option>
         <option value="ZH">Chinese</option>
@@ -37,10 +42,25 @@
         <!-- Add more languages as needed -->
     </select>
       
+
+    <button type="button" class="mic-button" id="open-popup">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 9.4V5C15 3.34315 13.6569 2 12 2C10.8224 2 9.80325 2.67852 9.3122 3.66593M12 19V22M8 22H16M3 3L21 21M5.00043 10C5.00043 10 3.50062 19 12.0401 19C14.51 19 16.1333 18.2471 17.1933 17.1768M19.0317 13C19.2365 11.3477 19 10 19 10M12 15C10.3431 15 9 13.6569 9 12V9L14.1226 14.12C13.5796 14.6637 12.8291 15 12 15Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <p>Press the button to start recording:</p>
+        <button class="mic-record-button" id="start-recording">
+            <svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><path d="m439.5,236c0-11.3-9.1-20.4-20.4-20.4s-20.4,9.1-20.4,20.4c0,70-64,126.9-142.7,126.9-78.7,0-142.7-56.9-142.7-126.9 0-11.3-9.1-20.4-20.4-20.4s-20.4,9.1-20.4,20.4c0,86.2 71.5,157.4 163.1,166.7v57.5h-23.6c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h88c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-23.6v-57.5c91.6-9.3 163.1-80.5 163.1-166.7z"/><path d="m256,323.5c51,0 92.3-41.3 92.3-92.3v-127.9c0-51-41.3-92.3-92.3-92.3s-92.3,41.3-92.3,92.3v127.9c0,51 41.3,92.3 92.3,92.3zm-52.3-220.2c0-28.8 23.5-52.3 52.3-52.3s52.3,23.5 52.3,52.3v127.9c0,28.8-23.5,52.3-52.3,52.3s-52.3-23.5-52.3-52.3v-127.9z"/></svg>
+        </button>
+    </div>
+  
+
     <!-- Cash service -->
     <div class="container mt-3">
         <div id="home" class="d-flex justify-content-between align-items-center">
             <div class="row flex-grow-1" id="buttonsContainer">
+                <h3>Withdraw</h3>
                 <div class="col-6 mb-3" >
                     <button class="btn btn-secondary" onclick="gotoProcessing(event)">$50</button>
                 </div>
@@ -57,7 +77,7 @@
                     <button class="btn btn-secondary" onclick="moreDeposit()">Other cash amount</button>
                 </div>
             </div>
-            <div class="row flex-grow-1 px-3">
+            <div class="row flex-grow-1 px-3" id="moreServicesContainer">
                 <div class="col-6 mb-3">
                     <button class="btn btn-secondary service" onclick="gotoDeposit()">Deposit cash</button>
                 </div>
@@ -67,13 +87,14 @@
                 <div class="col-12 mb-3">
                     <button onclick="showMoreService()" class="btn btn-light">More services</button>
                 </div>
-            </div>
+            </div><div id="divider"></div>
         </div>
+        
         <!-- Non-cash/More services  -->
         <div id="moreService" class="d-flex justify-content-between align-items-center">
             <div class="row">
                 <div class="col-12">
-                    <p><strong>Non-cash service</strong></p>
+                    <h3>Non-cash services</h3>
                 </div>
                 <div class="col-4 mb-3">
                     <button class="btn btn-secondary">Set up quick transaction</button>
@@ -91,7 +112,7 @@
                     <button class="btn btn-secondary">CPF services</button>
                 </div>
                 <div class="col-4 mb-3">
-                    <button class="btn btn-secondary">Investment services</button>
+                    <a href="/addface"><button class="btn btn-secondary">Add Facial Recognition</button></a>
                 </div>
             </div>
         </div>
@@ -209,7 +230,7 @@
             };
     
             // Send the data to the backend via a POST request
-            fetch('http://localhost:3000/submit-report', {
+            fetch('/submit-report', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

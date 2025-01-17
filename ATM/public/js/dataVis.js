@@ -1,5 +1,3 @@
-// const e = require("express");
-
 let bankTransactions = [];
 let nonATMTransactions = [];
 let atmTypes = [];
@@ -30,11 +28,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         atmTypes = await atmTypesResponse.json();
         nonAtmTypes = await nonAtmTypesResponse.json();
 
-        
 
         // Map types for easier lookup
         atmTypeMap = Object.fromEntries(atmTypes.map(type => [type.typeID, type.typeName]));
         nonAtmTypeMap = Object.fromEntries(nonAtmTypes.map(type => [type.typeID, type.typeName]));
+
+        // console.log(bankTransactions);
+        // console.log(nonATMTransactions);
+        // console.log(atmTypeMap);
+        // console.log(nonAtmTypeMap);
 
         // Call chart functions
         createMonthlyTransactionsChart(nonATMTransactions, atmTypeMap, 'chart1');
@@ -46,12 +48,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap, 'chart6');
         
 
+
+        // Sample usage
+        // const result = await processTransactionData(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap);
+        // console.log(result);
+
+        await generateReportDescriptions();
     } catch (error) {
         console.error("Error fetching transactions:", error);
     }
 });
 
-// Function to create a bar chart of total transactions by month
+// Function to create a bar chart of total personal transactions amount by month
 function createMonthlyTransactionsChart(transactions, atmTypeMap, chartid) {
     const monthlyTotals = Array(12).fill(0); // Initialize array for 12 months
 
@@ -143,6 +151,7 @@ function createSpendingCategoriesChart(transactions, nonAtmTypeMap, chartid) {
             }]
         },       
         options: {
+            animation: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -358,6 +367,12 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
 
     let balance = 0;  // Start with initial balance of 0 or the user's starting balance
 
+    // Month names array for mapping month numbers to month names in word form
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
     // Combine ATM and non-ATM transactions into one list for easy processing
     const allTransactions = [
         ...bankTransactions.map(transaction => ({
@@ -378,7 +393,9 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
     // Iterate through all sorted transactions to compute the balance for each month
     allTransactions.forEach(transaction => {
         const date = new Date(transaction.transactionDate);
-        const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;  // Create a key like '2024-1' for January 2024
+        const monthIndex = date.getMonth();  // Get month index (0-11)
+        const year = date.getFullYear();
+        const monthKey = `${year}-${monthIndex + 1}`;  // Create a key like '2024-1' for January 2024
         const transactionAmount = transaction.amount;
 
         // Update the balance based on transaction type (ATM or non-ATM)
@@ -390,21 +407,29 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
                 balance -= transactionAmount;  // Withdrawals/Transfers decrease the balance
             }
         } else {
-            // Non-ATM transactions (expenses)
-            if (transaction.category === 'Bills' || transaction.category === 'Entertainment' || transaction.category === 'Medical' || transaction.category === 'Shopping') {
-                balance -= transactionAmount;  // Expenses decrease the balance
+            // Non-ATM transactions (expenses or deposits)
+            if (transaction.category === 'Deposit') {
+                balance += transactionAmount;  // Non-ATM deposit increases balance
+            } else if (['Bills', 'Entertainment', 'Medical', 'Shopping'].includes(transaction.category)) {
+                balance -= transactionAmount;  // Expenses decrease balance
             }
         }
 
         // Store the balance for this month
-        if (!monthlyBalances[monthKey]) {
-            monthlyBalances[monthKey] = balance;
+        monthlyBalances[monthKey] = balance;
+        if (!months.includes(monthKey)) {
             months.push(monthKey);  // Store the month (year-month format) for the x-axis
         }
     });
 
     // Sort months by date (ascending)
     months.sort((a, b) => new Date(a) - new Date(b));
+
+    // Convert the months from 'YYYY-MM' format to 'Month Name' format
+    const monthLabels = months.map(monthKey => {
+        const [year, monthIndex] = monthKey.split('-');
+        return `${monthNames[parseInt(monthIndex) - 1]} ${year}`;  // Convert numeric month to word form
+    });
 
     // Push the balance for each month into the balances array in the correct order
     months.forEach(month => {
@@ -416,7 +441,7 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: months,  // Labels are the months in 'YYYY-MM' format
+            labels: monthLabels,  // Use the new month labels in word form
             datasets: [{
                 label: 'Bank Account Balance Over Time',
                 data: balances,
@@ -460,66 +485,137 @@ function generateBankAccountBalanceGraph(bankTransactions, nonATMTransactions, a
     });
 }
 
-
+// Creates the report pdf
 async function generateFinancialReportPDF() {
+
+    async function addChartToPDF(chartId) {
+        const canvas = document.getElementById(chartId);
+        if (canvas) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const chartImage = await html2canvas(canvas).then(canvas => canvas.toDataURL("image/png"));
+    
+            // Dimensions of the chart on the canvas
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+    
+            // Maintain aspect ratio
+            let chartWidth = pageWidth * 0.8;  // Default width is 80% of page width
+            let chartHeight = (canvasHeight / canvasWidth) * chartWidth;  // Maintain aspect ratio
+    
+            // Special case for "duplicate-chart2"
+            if (chartId === "duplicate-chart2") {
+                chartWidth = 100;
+                chartHeight = 100;  // Fixed size
+            }
+    
+            // Check if the image fits the current page; if not, add a new page
+            if (yOffset + chartHeight > pageHeight - 20) {  // Account for margin
+                doc.addPage();
+                yOffset = 20;  // Reset yOffset for new page with margin
+            }
+    
+            // Add the chart image to the PDF
+            const xPosition = (pageWidth - chartWidth) / 2;  // Center horizontally
+            doc.addImage(chartImage, 'PNG', xPosition, yOffset, chartWidth, chartHeight);
+    
+            // Update yOffset for the next chart
+            yOffset += chartHeight + 10;  // Add smaller spacing below each chart
+        }
+    }
+    
+
     // Show the loading animation and overlay
     document.getElementById("loading-animation").style.display = "block";
     document.getElementById("overlay").style.display = "block";
     document.getElementById("reportBtn").disabled = true; // Disable button
 
+    //Get AI Descriptions
+    let aiReport = await generateReportDescriptions();
+
+    if (typeof aiReport !== 'string') {
+        // Convert JSON object to a readable string format if needed
+        aiReport = JSON.stringify(aiReport, null, 2);  // Pretty-print with indentation
+    }
+
+    textcontent = aiReport.split('**SECTION SPLITS OFF HERE**');
+    // console.log(textContent)
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-    let yOffset = 10;
 
-    // Set Title and Financial Status
+    // First page: Logo only
+    const logo = new Image();
+    logo.src = "../images/OCBC_logo.png";
+    await new Promise((resolve) => (logo.onload = resolve));
+    doc.addImage(logo, "PNG", (pageWidth - 100) / 2, (pageHeight - 50) / 2, 100, 50);  // Centered logo on the first page
+    doc.addPage();  // Start a new page after the logo
+
+    let yOffset = 20;  // Starting y-offset with a smaller margin
+    
+
+    // Title and Financial Status
     doc.setFontSize(16);
     doc.text("Financial Summary Report", 10, yOffset);
-    yOffset += 10;
+    yOffset += 15;
 
     doc.setFontSize(12);
-    doc.text("Your current financial status is as follows:", 10, yOffset);
-    yOffset += 10;
-    doc.text("Status: Stable with consistent spending and income flow. Continue budgeting carefully.", 10, yOffset);
-    yOffset += 20;
+    // const lines = doc.splitTextToSize(aiReport, 180);
+    // doc.text(lines, 10, yOffset);
+    // yOffset += 10;
 
     await renderDuplicateCharts();
-    const chartIds = ['duplicate-chart1', 'duplicate-chart2', 'duplicate-chart3', 'duplicate-chart4', 'duplicate-chart5', 'duplicate-chart6'];
+    const chartIds = ['duplicate-chart2', 'duplicate-chart3', 'duplicate-chart1', 'duplicate-chart4', 'duplicate-chart5', 'duplicate-chart6'];
 
-    for (const chartId of chartIds) {
-        const canvas = document.getElementById(chartId);
 
-        if (canvas) {
-            try {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                const chartImage = await html2canvas(canvas).then(canvas => canvas.toDataURL("image/png"));
-                doc.addImage(chartImage, 'PNG', 10, yOffset, 150, 80);
-                yOffset += 90;
 
-                if (yOffset + 90 > pageHeight) {
-                    doc.addPage();
-                    yOffset = 10;
-                }
-            } catch (error) {
-                console.error(`Error capturing image for ${chartId}:`, error);
-            }
-        } else {
-            console.warn(`Canvas with id ${chartId} not found.`);
-        }
+    // Add charts and content with controlled spacing
+    await addChartToPDF("duplicate-chart2");
+    await addChartToPDF("duplicate-chart3");
+
+    yOffset += 10;
+    const lines0 = doc.splitTextToSize(textcontent[0], 180).slice(0, 15);
+    doc.text(lines0, 10, yOffset);
+    yOffset += lines0.length * 6;  // Adjust line spacing to avoid large gaps
+
+    if (yOffset + 80 > pageHeight - 20) {
+        doc.addPage();
+        yOffset = 20;
     }
+    await addChartToPDF("duplicate-chart1");
+    await addChartToPDF("duplicate-chart4");
+
+    yOffset += 10;
+    const lines1 = doc.splitTextToSize(textcontent[1], 180).slice(0, 15);
+    doc.text(lines1, 10, yOffset);
+    yOffset += lines1.length * 6;
+
+    if (yOffset + 80 > pageHeight - 20) {
+        doc.addPage();
+        yOffset = 20;
+    }
+    await addChartToPDF("duplicate-chart5");
+    await addChartToPDF("duplicate-chart6");
+
+    yOffset += 10;
+    const lines2 = doc.splitTextToSize(textcontent[2], 180).slice(0, 15);
+    doc.text(lines2, 10, yOffset);
 
     const pdfBlob = doc.output("blob");
     const zipBlob = await compressPDFToZip(pdfBlob);
 
-    // const link = document.createElement("a");
-    // link.href = URL.createObjectURL(zipBlob);
-    // link.download = "Financial_Summary_Report.zip";
-    // link.click();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(pdfBlob);
+    link.download = "Financial_Summary_Report.pdf";
+    link.click();
 
     const emailResponse = await fetch(`/accountEmail/${accountID}`)
     if (!emailResponse.ok) {
         throw new Error("Network response was not ok");
     }
+
+
     let email = await emailResponse.json();
 
     const reader = new FileReader();
@@ -562,6 +658,212 @@ async function generateFinancialReportPDF() {
     };
 }
 
+// Procress Data For AI
+async function processTransactionData(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap) {
+    // 1. Monthly total transaction amounts (nonATMTransactions)
+    let monthlyTransactionAmount = {
+        January: 0, February: 0, March: 0, April: 0,
+        May: 0, June: 0, July: 0, August: 0,
+        September: 0, October: 0, November: 0, December: 0
+    };
+
+    // 2. Spending breakdown by category
+    let spendingByCategory = {};
+
+    // 3. Average spending per category
+    let categoryTotals = {};
+    let categoryCounts = {};
+
+    // 4. Income vs. expenses by month
+    let monthlyIncome = { ...monthlyTransactionAmount };
+    let monthlyExpenses = { ...monthlyTransactionAmount };
+
+    // 5. Number of transactions per day of the week
+    let transactionsPerDay = {
+        Sunday: 0, Monday: 0, Tuesday: 0, Wednesday: 0,
+        Thursday: 0, Friday: 0, Saturday: 0
+    };
+
+    // 6. Balance over time (with all months)
+    let monthlyBalances = { ...monthlyTransactionAmount }; // Initialize with all months as 0
+    let balance = 0;
+
+    // Combine both types of transactions for processing
+    const allTransactions = [
+        ...bankTransactions.map(transaction => ({
+            ...transaction,
+            isATM: true,
+            category: atmTypeMap[transaction.typeID] || 'Other'
+        })),
+        ...nonATMTransactions.map(transaction => ({
+            ...transaction,
+            isATM: false,
+            category: nonAtmTypeMap[transaction.typeID] || 'Other'
+        }))
+    ];
+
+    // Sort transactions by date
+    allTransactions.sort((a, b) => new Date(a.transactionDate) - new Date(b.transactionDate));
+
+    // Process each transaction
+    allTransactions.forEach(transaction => {
+        const date = new Date(transaction.transactionDate);
+        const monthName = date.toLocaleString('default', { month: 'long' });
+        const dayName = date.toLocaleString('default', { weekday: 'long' });
+        const transactionAmount = transaction.amount;
+        const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+
+        // 1. Monthly total transaction amounts
+        monthlyTransactionAmount[monthName] += transactionAmount;
+
+        // 2. Spending breakdown by category (non-ATM transactions only)
+        if (!transaction.isATM) {
+            spendingByCategory[transaction.category] = (spendingByCategory[transaction.category] || 0) + transactionAmount;
+        }
+
+        // 3. Average spending per category
+        categoryTotals[transaction.category] = (categoryTotals[transaction.category] || 0) + transactionAmount;
+        categoryCounts[transaction.category] = (categoryCounts[transaction.category] || 0) + 1;
+
+        // 4. Income vs. expenses by month
+        if (transaction.isATM) {
+            if (transaction.category === "Deposit") {
+                monthlyIncome[monthName] += transactionAmount;
+                balance += transactionAmount;
+            } else {
+                monthlyExpenses[monthName] += transactionAmount;
+                balance -= transactionAmount;
+            }
+        } else {
+            monthlyExpenses[monthName] += transactionAmount;
+            balance -= transactionAmount;
+        }
+
+        // 5. Number of transactions per day of the week
+        transactionsPerDay[dayName] += 1;
+
+        // 6. Update balance for the current month
+        monthlyBalances[monthName] = balance;
+    });
+
+    // Calculate average spending per category
+    let averageSpendingByCategory = {};
+    for (const category in categoryTotals) {
+        averageSpendingByCategory[category] = categoryTotals[category] / categoryCounts[category];
+    }
+
+    return {
+        monthlyTransactionAmount,
+        spendingByCategory,
+        averageSpendingByCategory,
+        monthlyIncome,
+        monthlyExpenses,
+        transactionsPerDay,
+        monthlyBalances // Final monthly balances with all months, each populated
+    };
+}
+
+
+// Send data to AI and get description
+async function generateReportDescriptions() {
+    const url = '/start-chat';  // The URL for the POST request (you can adjust if necessary)
+
+    const data = await processTransactionData(bankTransactions, nonATMTransactions, atmTypeMap, nonAtmTypeMap);
+
+    const dataString = convertDataToString(data)
+    // Create the payload with the data wrapped inside a 'data' key
+    const payload = {
+        data: dataString  // Pass 'data' directly without wrapping it in an array
+    };
+
+    // Make the POST request to the backend
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)  // Convert the data to JSON format
+        });
+
+        // Check if the response is OK (status 200)
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        // Parse the response from the server
+        const responseData = await response.json();
+        // console.log('Server Response:', responseData);
+        
+
+        return responseData;
+        // You can now do something with the responseData
+    } catch (error) {
+        console.error('Error sending request:', error);
+    }
+}
+
+function convertDataToString(data) {
+    let result = '';
+
+    // Convert monthlyTransactionAmount
+    result += '"monthlyTransactionAmount": {\n';
+    for (const [month, amount] of Object.entries(data.monthlyTransactionAmount)) {
+        result += `    "${month}": ${amount},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert spendingByCategory
+    result += '"spendingByCategory": {\n';
+    for (const [category, amount] of Object.entries(data.spendingByCategory)) {
+        result += `    "${category}": ${amount},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert averageSpendingByCategory
+    result += '"averageSpendingByCategory": {\n';
+    for (const [category, amount] of Object.entries(data.averageSpendingByCategory)) {
+        result += `    "${category}": ${amount},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert monthlyIncome
+    result += '"monthlyIncome": {\n';
+    for (const [month, income] of Object.entries(data.monthlyIncome)) {
+        result += `    "${month}": ${income},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert monthlyExpenses
+    result += '"monthlyExpenses": {\n';
+    for (const [month, expense] of Object.entries(data.monthlyExpenses)) {
+        result += `    "${month}": ${expense},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert transactionsPerDay
+    result += '"transactionsPerDay": {\n';
+    for (const [day, count] of Object.entries(data.transactionsPerDay)) {
+        result += `    "${day}": ${count},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '},\n';
+
+    // Convert monthlyBalances
+    result += '"monthlyBalances": {\n';
+    for (const [month, balance] of Object.entries(data.monthlyBalances)) {
+        result += `    "${month}": ${balance},\n`;
+    }
+    result = result.slice(0, -2) + '\n';  // Remove last comma and newline
+    result += '}\n';
+
+    return '{\n' + result + '\n}';
+}
 
 // Compress the PDF to a ZIP file
 async function compressPDFToZip(pdfBlob) {
@@ -575,7 +877,6 @@ async function compressPDFToZip(pdfBlob) {
     
     return zipBlob;
 }
-
 
 async function renderDuplicateCharts() {
     // Call chart functions and pass the duplicate canvas IDs
