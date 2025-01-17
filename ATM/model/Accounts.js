@@ -60,10 +60,8 @@ class Account {
             const sqlQuery = `
                 SELECT * FROM Account 
                 WHERE Account_Number = @accNo`;
-
             const request = connection.request();
             request.input("accNo", accNo);
-
             const result = await request.query(sqlQuery);
             connection.close();
 
@@ -73,6 +71,33 @@ class Account {
             throw err;
         }
     }
+
+    static async getUserByPin(pin) {
+        try {
+          const connection = await sql.connect(dbConfig);
+          const sqlQuery = `
+            SELECT * FROM Account 
+            WHERE Account_PIN = @pin`;
+    
+          const request = connection.request();
+          request.input("pin", sql.VarChar, pin);
+    
+          const result = await request.query(sqlQuery);
+          connection.close();
+    
+          if (result.recordset.length > 0) {
+            const row = result.recordset[0];
+            return new Account(row.AccountID, row.UserID, row.Account_Number, row.Account_PIN);
+          } else {
+            return null; // No matching account found
+          }
+        } catch (err) {
+          console.error("Error retrieving user by PIN:", err);
+          throw err;
+        }
+    }
 }
+
+
 
 module.exports = Account;

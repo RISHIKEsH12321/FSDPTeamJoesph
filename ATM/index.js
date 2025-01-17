@@ -6,7 +6,11 @@ const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const path = require("path");
 const nodemailer = require('nodemailer');
-const axios = require("axios");
+
+const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config();
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,7 +26,8 @@ const bankTransaction = require("./controller/Bank_Transactions_Controller");
 const nonATMTransaction = require("./controller/Non_ATM_Transactions_Controller");
 const atmTypes = require("./controller/ATM_Transaction_Type_Controller");
 const nonAtmTypes = require("./controller/Non_ATM_Transaction_Type_Controller");
-
+const aiReport = require("./controller/Gemini_Controller");
+const faceID = require("./controller/UserFaceController");
 
 app.use("/",express.static("public")); //Static Files start from public 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -135,6 +140,9 @@ app.get("/graph1", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));
 });
 
+app.post('/start-chat', aiReport.startOneTimeChat);
+app.post('/voice-chat', aiReport.getVoiceIntructions);
+
 //Email Routes (Rishikesh)
 app.post('/send-pdf/', async (req, res) => {
     const { email, pdfData } = req.body;
@@ -212,8 +220,32 @@ app.post('/send-zip/', async (req, res) => {
     }
 });
 
+app.post('/loginWithFace', faceID.loginWithFace);
+app.post("/addfacetouser", faceID.addFace);
+app.get("/getStoredFaceDescriptors", faceID.getStoredFaceDescriptors);
+
+app.get("/addFace", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "createfaceid.html"));
+});
+
+app.get("/loginFace", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "faceid.html"));
+});
+
+app.get("/voice", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "voiceTest.html"));
+});
+
+
+
+app.post("/validate-pin", account.validatePinController);
+
 app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
+});
+
+app.get("/finger", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "finger.html"));
 });
 
 app.get("/pin", (req, res) => {

@@ -5,6 +5,6 @@ INSERT INTO Users (Date_Joined, Phone_Number, NRIC) VALUES
 ALTER TABLE Account
 ADD name VARCHAR(20) NULL;
 
-INSERT INTO Account (UserID, Account_Number, Account_PIN, Email) VALUES
+INSERT INTO Account (UserID, Account_Number, Account_PIN, Email, Name) VALUES
 (3, '4321890234', '321456', 'rishi070606@gmail.com',"John"), 
 (4, '0166614531', '123456', 'rishi070606@gmail.com', "Joseph");
