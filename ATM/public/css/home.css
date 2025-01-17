@@ -43,3 +43,36 @@ body {
 #buttonsContainer button{
     background-color: #6c757d;
 }
+
+/* Style the select dropdown */
+#languageSelector {
+    width: 200px; /* Adjust width as needed */
+    padding: 10px;
+    font-size: 16px;
+    color: #333; /* Text color */
+    background-color: #f9f9f9; /* Background color */
+    border: 2px solid #ccc; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+    outline: none; /* Remove outline on focus */
+    transition: border-color 0.3s ease; /* Smooth transition */
+}
+
+/* Add hover effect */
+#languageSelector:hover {
+    border-color: #007bff; /* Change border color on hover */
+    cursor: pointer;
+}
+
+/* Add focus effect */
+#languageSelector:focus {
+    border-color: #007bff; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow */
+}
+
+/* Style the options */
+#languageSelector option {
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+}
