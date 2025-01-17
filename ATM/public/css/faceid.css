@@ -1,0 +1,74 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ececec;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
+    background-size: 50px 50px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Make the body fill the full height of the viewport */
+}
+
+h1 {
+    color: #333;
+    font-weight: bold;
+    font-size: 2.5em;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Centered container */
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+}
+
+/* Styling for video */
+#video {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Button styling */
+button {
+    padding: 10px 25px;
+    font-size: 16px;
+    color: #fff;
+    background-color: rgba(255, 0, 0, 0.8);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #990000;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: rgba(255, 0, 0, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Login info styling */
+#loginInfo {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: green;
+    font-weight: bold;
+}

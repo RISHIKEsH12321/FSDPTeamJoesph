@@ -4,39 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facial Recognition Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #video {
-            border: 1px solid black;
-            margin-bottom: 20px;
-        }
-
-        #canvas {
-            display: none;
-        }
-
-        #loginInfo {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: green;
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/faceid.css">    
 </head>
 <body>
-    <h1>Facial Recognition Login</h1>
+    <div id="container">
+        <h1>Facial Recognition Login</h1>
 
-    <video id="video" width="640" height="480" autoplay></video>
-    <canvas id="canvas" width="640" height="480"></canvas>
-
-    <button id="startScanBtn">Start Scanning</button>
-
-    <div id="loginInfo"></div> <!-- Display logged in user info -->
+        <video id="video" width="640" height="480" autoplay></video>
+        <!-- <canvas id="canvas" width="640" height="480"></canvas> -->
+    
+        <button id="startScanBtn">Start Scanning</button>
+    
+        <div id="loginInfo"></div> <!-- Display logged in user info -->
+    </div>
+    
 
     <script src="../js/faceid.js"></script> <!-- Your JS script for handling face recognition -->
     <script src="../face-api.js"></script> <!-- Include face-api.js -->

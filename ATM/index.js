@@ -105,6 +105,7 @@ app.get("/graph1", (req, res) => {
 });
 
 app.post('/start-chat', aiReport.startOneTimeChat);
+app.post('/voice-chat', aiReport.getVoiceIntructions);
 
 //Email Routes (Rishikesh)
 app.post('/send-pdf/', async (req, res) => {
@@ -195,10 +196,20 @@ app.get("/loginFace", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "faceid.html"));
 });
 
+app.get("/voice", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "voiceTest.html"));
+});
 
+
+
+app.post("/validate-pin", account.validatePinController);
 
 app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
+});
+
+app.get("/finger", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "finger.html"));
 });
 
 app.get("/pin", (req, res) => {
