@@ -30,13 +30,13 @@ The context of this is that the prompts will be things that were translated from
 I want you to convert the speech's text to instructions based on the syntax below.
 1. Withdraw x dollars -> If there is no ammount stated, x = 0. x must always be > 0
 2. Deposit x dollars into x Account -> If there is no ammount stated, x = 0. x must always be > 0. Account must be a 16 digit code
-2. Transfer x dollars into x Account -> If there is no ammount stated, x = 0. x must always be > 0. Account must be a 16 digit code
-3. Report -> This can be called when asking for financial report or balance, as the report contains both.
-4. Exit
-5. View Tutorials
-6. Activate Tutorial x -> x can be ["Cash Transfer", "Cash Withdraw", "Cash Deposit"]
-7. Register Face ID
-8. Report A Problem
+3. Transfer x dollars into x Account -> If there is no ammount stated, x = 0. x must always be > 0. Account must be a 16 digit code
+4. Report -> This can be called when asking for financial report or balance, as the report contains both.
+5. Exit
+6. View Tutorials
+7. Activate Tutorial x -> x can be ["Cash Transfer", "Cash Withdraw", "Cash Deposit"]
+8. Register Face ID
+9. Report A Problem
 If the text cannot be converted into the above 8 types, then give back "Nothing"
 `,
   generationConfig: generationConfig,

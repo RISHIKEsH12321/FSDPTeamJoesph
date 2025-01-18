@@ -26,6 +26,7 @@ const atmTypes = require("./controller/ATM_Transaction_Type_Controller");
 const nonAtmTypes = require("./controller/Non_ATM_Transaction_Type_Controller");
 const aiReport = require("./controller/Gemini_Controller");
 const faceID = require("./controller/UserFaceController");
+const ATM = require("./controller/ATM_Controller");
 
 app.use("/",express.static("public")); //Static Files start from public 
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -99,11 +100,22 @@ app.get("/bankTrans/:id", bankTransaction.getBankTransactionsByAccountId);
 app.get("/personalTrans/:id", nonATMTransaction.getNonATMTransactionsByAccountId);
 app.get("/accountEmail/:accountId", account.getEmailByAccountId);
 
-//Pages Routes (Rishikesh)
+//Withdrawl Routes
+app.get("/withdrawal", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "withdrawal.html"));
+});
+
+//ATM Notes Amount
+app.get("/ATM-details/:atmID", ATM.getATMDetailsById);
+app.put("/ATM-decrease", ATM.withdrawFromATM);
+app.put("/ATM-increase", ATM.depositToATM);
+
+//Report Routes (Rishikesh)
 app.get("/graph1", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "dataVis.html"));
 });
 
+//AI Routes
 app.post('/start-chat', aiReport.startOneTimeChat);
 app.post('/voice-chat', aiReport.getVoiceIntructions);
 
@@ -184,6 +196,7 @@ app.post('/send-zip/', async (req, res) => {
     }
 });
 
+//Face ID Routes (Rishikesh)
 app.post('/loginWithFace', faceID.loginWithFace);
 app.post("/addfacetouser", faceID.addFace);
 app.get("/getStoredFaceDescriptors", faceID.getStoredFaceDescriptors);
@@ -201,7 +214,7 @@ app.get("/voice", (req, res) => {
 });
 
 
-
+//Louis Routes
 app.post("/validate-pin", account.validatePinController);
 
 app.get("/print", (req, res) => {

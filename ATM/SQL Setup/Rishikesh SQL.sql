@@ -98,3 +98,16 @@ INSERT INTO Organization (OrganizationName, Description, TypeID) VALUES
 ('HealthCare Clinic', 'Medical Services', 2),
 ('CinemaHouse', 'Entertainment', 3),
 ('Utility Corp', 'Bill Payments', 4);
+
+--- ATM Information Table
+CREATE TABLE ATM (
+    ID INT PRIMARY KEY IDENTITY(1, 1), -- Unique ID for each ATM
+    Location VARCHAR(255) NOT NULL,    -- Location of the ATM
+    NumOf5 INT NOT NULL DEFAULT 0,     -- Number of 5 Dollar Notes
+    NumOf10 INT NOT NULL DEFAULT 0,    -- Number of 10 Dollar Notes
+    NumOf50 INT NOT NULL DEFAULT 0,    -- Number of 50 Dollar Notes
+    NumOf100 INT NOT NULL DEFAULT 0    -- Number of 100 Dollar Notes
+);
+
+INSERT INTO ATM (Location, NumOf5, NumOf10, NumOf50, NumOf100)
+VALUES ('Clementi MRT', 617, 523, 996, 390);

@@ -93,6 +93,8 @@ function moreDeposit(){
     event.preventDefault();
     document.getElementById("home").style.cssText = "display: none !important";
     document.getElementById("deposit").style.display = "block";
+    document.getElementById("headerContainer2").style.cssText = "opacity:0";
+
 
     const wHint = document.getElementById("wHint");
     wHint.innerHTML=
