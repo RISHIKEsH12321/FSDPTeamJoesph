@@ -6,9 +6,11 @@ const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const path = require("path");
 const nodemailer = require('nodemailer');
+
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -88,6 +90,40 @@ app.get('/processing', (req, res) => {
 });
 app.get('/transferFunds', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "transferFunds.html"));
+});
+app.post("/translate", async (req, res) => {
+    console.log("Incoming request body:", req.body);
+    const { text, target_lang } = req.body; // Expecting `text` and `target_lang` in the request body
+    const apiKey = "5d05c8e3-941c-47b2-8710-ff151b0a9d19:fx"; // Replace with your actual API key
+    console.log("API Key:", apiKey); 
+    try {
+        // Make the request to DeepL API
+        const response = await axios.post(
+            "https://api-free.deepl.com/v2/translate",
+            new URLSearchParams({
+                auth_key: apiKey,
+                text: text,
+                target_lang: target_lang,
+            }).toString(),
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            }
+            // {
+            //     auth_key: apiKey,
+            //     text: text,
+            //     target_lang: target_lang,
+            // }
+        );
+
+        console.log("API response:", response.data);
+        // Send the translated text back to the client
+        res.json(response.data);
+    } catch (error) {
+        console.error("Error translating text:", error.response?.data || error.message);
+        res.status(500).send("Error occurred while translating text");
+    }
 });
 
 //Data Routes (Rishikesh)
