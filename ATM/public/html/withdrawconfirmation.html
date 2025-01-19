@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Withdrawal</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .amount {
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .confirm {
+      background-color: #28a745;
+      color: white;
+    }
+    .cancel {
+      background-color: #dc3545;
+      color: white;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Confirm Withdrawal</h1>
+    <p class="amount" id="withdrawAmount"></p>
+    <button class="confirm" onclick="confirmWithdrawal()">Confirm</button>
+    <button class="cancel" onclick="cancelWithdrawal()">Cancel</button>
+  </div>
+
+  <script>
+    // Retrieve the amount from localStorage
+    const withdrawAmount = localStorage.getItem("withdrawAmount");
+    document.getElementById("withdrawAmount").innerText = `Amount: $${withdrawAmount}`;
+
+    function confirmWithdrawal() {
+      // Send confirmation to the server
+      fetch("/confirm-withdrawal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: withdrawAmount }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Withdrawal confirmed!");
+            window.location.href = "/home";
+          } else {
+            alert("Error processing withdrawal.");
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+
+    function cancelWithdrawal() {
+      // Redirect to home or reset
+      alert("Withdrawal cancelled.");
+      window.location.href = "/home";
+    }
+  </script>
+</body>
+</html>
