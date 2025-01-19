@@ -215,6 +215,14 @@ app.get("/face", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "face.html"));
 });
 
+app.get("/withdrawapp", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "withdrawapp.html"));
+});
+
+app.get("/generateqrcode", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "generateqrcode.html"));
+});
+
 app.post('/submit-report', async (req, res) => {
     const { name, email, phoneNumber, problemDescription, timestamp } = req.body;
 
