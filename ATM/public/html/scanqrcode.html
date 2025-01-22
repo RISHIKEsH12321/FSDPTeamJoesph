@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -23,23 +24,20 @@
             width: 100%;
             height: auto;
             border-radius: 8px;
+            border: 2px solid #007bff;
         }
-        #qr-result {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 18px;
+        #message {
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
         }
     </style>
 </head>
 <body>
+    <div id="message">Scanning QR Code...</div>
     <div id="video-container">
         <video id="video" autoplay muted></video>
-        <div id="qr-result">QR Code: <span id="result">None</span></div>
     </div>
 
     <!-- Load jsQR library -->
@@ -49,7 +47,7 @@
         async function setupCamera() {
             const video = document.getElementById('video');
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 video.srcObject = stream;
                 return new Promise((resolve) => {
                     video.onloadedmetadata = () => {
@@ -67,8 +65,6 @@
             const video = document.getElementById('video');
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            const qrResult = document.getElementById('qr-result');
-            const resultElement = document.getElementById('result');
 
             setInterval(() => {
                 canvas.width = video.videoWidth;
@@ -79,21 +75,20 @@
                 const decodedQR = jsQR(imageData.data, canvas.width, canvas.height);
 
                 if (decodedQR) {
-                    resultElement.textContent = decodedQR.data;
-                    qrResult.style.display = 'block';
-                } else {
-                    resultElement.textContent = 'None';
-                    qrResult.style.display = 'none';
+                    handleQRCode(decodedQR.data); // Process the QR code data
                 }
-            }, 100);
+            }, 500);
         }
 
         async function handleQRCode(qrData) {
-        // Assuming the QR data is plain text in the format "PIN,AMOUNT"
-            const [pin, amount] = qrData.split(",");
+            const pinMatch = qrData.match(/PIN:(\d{6})/);
+            const amountMatch = qrData.match(/Amount:(\d+)/);
 
-            if (pin.length === 6) {
-                // Validate PIN using the server
+            if (pinMatch && amountMatch) {
+                const pin = pinMatch[1];
+                const amount = amountMatch[1];
+
+                // Validate the PIN using the server
                 try {
                     const response = await fetch("/validate-pin", {
                         method: "POST",
@@ -103,22 +98,25 @@
 
                     const result = await response.json();
                     if (result.success) {
-                        // Store the amount in session/localStorage
-                        localStorage.setItem("withdrawAmount", amount);
-                        window.location.href = "/confirm"; // Redirect to confirmation page
+                        // Store the amount in session storage
+                        sessionStorage.setItem("withdrawAmount", amount);
+                        alert(`PIN validated. Proceeding to withdrawal confirmation. Amount: $${amount}`);
+                        window.location.href = "/confirmwithdraw"; // Redirect to confirmation page
                     } else {
-                        alert("Invalid PIN!");
+                        alert("Invalid PIN. Please try again.");
                     }
-                } catch (err) {
-                    console.error("Error validating PIN:", err);
+                } catch (error) {
+                    console.error("Error validating PIN:", error);
+                    alert("An error occurred while validating the PIN. Please try again.");
                 }
+            } else {
+                alert("Invalid QR code format.");
             }
         }
 
         async function init() {
             await setupCamera();
             scanQRCode();
-            handleQRCode();
         }
 
         init();
