@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         userID = getUserIDFromLocalStorage();
         editGreeting(userID);
 
-
+console.log(accountId);
         const accountRes = await fetch(`/home/${accountId}`);
         
         accountData = await accountRes.json();
@@ -145,3 +145,162 @@ function editGreeting(userID){
             break;
     }
 }
+
+async function sendWithdrawNotification(amount){
+    console.log("Amount withdrawed: " + amount);
+    const emailResponse = await fetch(`/accountEmail/${accountId}`)
+    if (!emailResponse.ok) {
+        throw new Error("Network response was not ok");
+    }
+    let email = await emailResponse.json(); 
+    try{
+        await fetch('/withdrawalNotification',{
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email.email,
+                amount: amount
+            })
+        })
+    }catch(error){
+        console.error("Error sending email:", error);
+    };
+    window.location.href="processing"; //process
+}
+
+function addTypingIndicator() {
+    const messages = document.getElementById('messages');
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'message bot-message typing';
+    typingIndicator.textContent = '...typing';
+    messages.appendChild(typingIndicator);
+    messages.scrollTop = messages.scrollHeight; 
+  }
+
+// Function to add a message to the chat
+function addMessage(content, isUser = false) {
+    const messages = document.getElementById('messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = isUser ? 'message user-message' : 'message bot-message';
+    messageDiv.textContent = content;
+    messages.appendChild(messageDiv);
+    messages.scrollTop = messages.scrollHeight; // Scroll to the bottom
+  }
+  
+  // Event listener to toggle the chatbox visibility
+  document.getElementById('chatbot-logo').addEventListener('click', () => {
+    const chatbotWrapper = document.getElementById('chatbot-wrapper');
+    // Toggle chatbox visibility
+    chatbotWrapper.style.display = (chatbotWrapper.style.display === 'none' || chatbotWrapper.style.display === '') ? 'flex' : 'none';
+  });
+  
+  /*
+  // Event listener for sending the message
+  document.getElementById('send-btn').addEventListener('click', async () => {
+    const chatInput = document.getElementById('chat-input');
+    const userInput = chatInput.value.trim();
+  
+    if (!userInput) return; // Do nothing for empty input
+  
+    // Add the user's message to the chat
+    addMessage(userInput, true);
+    chatInput.value = ''; // Clear the input field
+  
+    try {
+      // Send the user's message to the backend
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: userInput }),
+      });
+  
+      const data = await response.json();
+      // Add the bot's response to the chat
+      addMessage(data.response, false);
+    } catch (error) {
+      console.error('Error:', error);
+      addMessage('Sorry, something went wrong. Please try again later.', false);
+    }
+  });
+  */
+ 
+  // Map language names to language codes
+const languageMap = {
+    "English": "EN",
+    "Chinese": "ZH",
+    "Spanish": "ES",
+    "French": "FR",
+    "German": "DE",
+    "Russian": "RU",
+    "Korean": "KO",
+    // Add more languages if necessary
+};
+
+  // Function to send a message
+  async function sendMessage() {
+    const chatInput = document.getElementById("chat-input");
+    const userInput = chatInput.value.trim();
+
+    if (!userInput) return;
+
+    addMessage(userInput, true);
+    chatInput.value = "";
+
+    addTypingIndicator(); // Add typing indicator before the bot responds
+
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: userInput }),
+      });
+
+      const data = await response.json();
+      const typingMessage = document.querySelector('.typing');
+      if (typingMessage) typingMessage.remove(); // Remove the typing indicator
+      addMessage(data.response, false);
+
+      // Ensure the chat scrolls to the bottom after the message is added
+      const messages = document.getElementById('messages');
+      messages.scrollTop = messages.scrollHeight;
+
+      // Check if the user's message is a translation request
+      const match = userInput.toLowerCase().match(/translate to (\w+)/);
+      if (match) {
+          const languageName = match[1];
+          const targetLang = languageMap[languageName.charAt(0).toUpperCase() + languageName.slice(1)];
+
+          if (targetLang) {
+              // Store the selected language in sessionStorage
+              sessionStorage.setItem('selectedLang', targetLang);
+              
+              // Translate the page immediately
+              const textElements = getTextElements(); // Get all text on the page
+              translateText(textElements, targetLang); // Translate the page text
+
+              // Optionally, you can add a message confirming the translation
+              addMessage(`The page is being translated to ${languageName}.`, false);
+          } else {
+              addMessage("Sorry, I don't support that language yet.", false);
+          }
+      }
+
+      // Check if the response contains a withdrawal confirmation
+      if(data.response.includes("Withdrawing")){
+        setTimeout(() => {
+            window.location.href = "processing";
+        }, 2500);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      addMessage("Sorry, something went wrong.", false);
+    }
+  }
+
+  // Event listeners for sending messages
+  document.getElementById("send-btn").addEventListener("click", sendMessage);
+  document.getElementById("chat-input").addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });

@@ -6,6 +6,7 @@ const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const path = require("path");
 const nodemailer = require('nodemailer');
+const {GoogleGenerativeAI,HarmCategory,HarmBlockThreshold,} = require("@google/generative-ai");
 
 const axios = require('axios');
 const dotenv = require('dotenv');
@@ -14,6 +15,10 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const genAI = new GoogleGenerativeAI(process.env.CHATBOT_API_KEY); // API key from .env
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
@@ -126,6 +131,115 @@ app.post("/translate", async (req, res) => {
     }
 });
 
+app.post('/withdrawalNotification', async (req, res) => {
+    const { email, amount } = req.body;
+    console.log("Sending Email Withdrawal Notifaction");
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'j32740728@gmail.com',
+            pass: 'dfqc tper yvdm klrt' 
+        }
+    });
+
+
+    const date = new Date();
+    // Create the email
+    const mailOptions = {
+        from: 'j32740728@gmail.com',
+        to: email,
+        subject: 'Withdrawal Alert',
+        text: `Dear Customer,
+        \n\n
+        You have withdrawed $${amount} at 101 Upper Bukit Timah Rd, on ${date.toLocaleDateString()} 
+        at ${date.toLocaleTimeString()}.
+        \n\n
+        If unauthorised, please call OCBC Hotline, 6535 7677.To view withdrawal, please login to Digibank.
+        \n\n
+        Thank you for banking with us.\n
+        Yours faithfully,
+        OCBC
+        `,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+        res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ error: 'Failed to send email' });
+    }
+});
+// Route to handle chat requests
+app.post("/chat", async (req, res) => {
+    const userQuery = req.body.query;
+  
+      // System instructions to limit scope and behavior
+  const systemInstructions = `
+You are a virtual ATM assistant. Your primary task is to help users perform banking operations, including withdrawing money, depositing funds, and providing translations.
+
+Key Rules:
+- The ATM only dispenses bills of $2, $5, $10, $50, and $100.
+- Use a stepwise approach to subtract the largest possible denomination from the requested amount until it reaches zero.
+- There is no $1 bill in the ATM.
+- Provide a clear breakdown of the denominations used, formatted as:
+  $50: 0
+  $10: 0
+  $5: 0
+  $2: 0
+- If the requested amount cannot be fully dispensed in whole dollar bills (e.g., $37), return an error message with an explanation.
+- Always prioritize using the largest available denominations first, then move to smaller ones, ensuring that $2 bills are considered correctly when necessary.
+- Respond only to ATM-related queries and reject unrelated questions politely.
+
+`;
+
+    // Modify the user query with system instructions
+    const modifiedQuery = `${systemInstructions}\nUser query: ${userQuery}`;
+    try {
+      // Generate a response using Google Generative AI
+      const result = await model.generateContent(modifiedQuery);
+      const botResponse = result.response.text();
+  
+      res.json({ response: botResponse });
+    } catch (error) {
+      console.error("Error:", error.message);
+      res.status(500).json({ response: "Sorry, something went wrong." });
+    }
+  });
+/*
+app.post('/chat', async (req, res) => {
+  const userInput = req.body.query;
+
+  try {
+    const response = await fetch('https://ai.googleapis.com/v1/models/gemini:generateText', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${CHATBOT_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: userInput,
+        model: 'gemini-large',
+        max_tokens: 256,
+      }),
+    });
+    if (!response.ok) {
+        // Log error details if the response status is not OK
+        console.error(`API Error: ${response.status} ${response.statusText}`);
+        const errorResponse = await response.text(); // Get the raw response text
+        console.error(errorResponse);
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+    const data = await response.json();
+    res.json({ response: data.choices[0].text });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ response: 'An error occurred while processing your request.' });
+  }
+});
+*/
 //Data Routes (Rishikesh)
 app.get("/atmTypes", atmTypes.getATMTransactionTypes);
 app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);
