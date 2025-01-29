@@ -8,7 +8,7 @@ voiceActivated();
  */
 async function updateATMNotes(notes, atmId) {
     try {
-        const response = await fetch("/ATM-increase", {
+        const response = await fetch("/ATM-decrease", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -19,44 +19,69 @@ async function updateATMNotes(notes, atmId) {
             }),
         });
 
-        if (response.ok) {
+        const result = await response.json();
+
+        if (response.ok && result.success) {
             console.log("ATM notes updated successfully.");
+            // alert("Withdrawal successful!");
+            return true;
         } else {
-            console.error("Failed to update ATM notes:", response.statusText);
-            alert("Error updating ATM notes. Please try again.");
+            console.error("Error updating ATM notes:", result.message);
+            console.log(result.message)
+            if (result.message === "Insufficient notes available in the ATM for the withdrawal.") {                
+                // alert("Insufficient funds in the ATM for the requested withdrawal.");
+                if (confirm("Insufficient funds. Select 'Ok' to find the nearest ATM?")) {
+                    // findNearestATM(); // Runs if user clicks "OK"
+                    document.getElementById("locator-modal-button").click();
+                    console.log(123)
+                    return;
+                } 
+                else {
+                    console.log("User declined to find nearest ATM.");
+                    return false;
+                }
+
+            } else {
+                alert("Error updating ATM notes: " + result.message);
+                return false;
+            }
         }
     } catch (error) {
         console.error("Error connecting to ATM API:", error);
         alert("Error connecting to the server. Please try again later.");
+        return false;
     }
 }
 
+
 // Modified withdraw function
-function withdraw(amount) {
+async function withdraw(amount) {
     
     const notes = calculateNotes(amount);
 
     console.log(`Dispensing ${notes[5]} $5 notes, ${notes[10]} $10 notes, ${notes[50]} $50 notes, ${notes[100]} $100 notes.`);
 
     // Call the backend to update ATM notes
-    updateATMNotes(notes, atmId);
+    const success = await updateATMNotes(notes, atmId);
 
-    // Redirect to processing page
-    window.location.href = "/processing";
+    if (success){
+        // Redirect to processing page
+        window.location.href = "/processing";
+    }
 }
 
 // Modified withdrawSpecific function
-function withdrawSpecific(event) {
+async function withdrawSpecific(event) {
     event.preventDefault();
-    // let amount = 0;
+    let amount = 0;
 
-    // const sessionAmt = sessionStorage.getItem('amount');
-    // if (sessionAmt!= null){
-    //     amount = Number(sessionAmt);
-    //     sessionStorage.setItem('amount', null);
-    // }else{
-    //     amount = parseInt(document.getElementById("amt").value, 10);
-    // }
+    const sessionAmt = sessionStorage.getItem('amount');
+    if (sessionAmt!= null){
+        amount = Number(sessionAmt);
+        sessionStorage.setItem('amount', null);
+    }else{
+        amount = parseInt(document.getElementById("amt").value, 10);
+    }
     
     // const amount = parseInt(document.getElementById("amt").value, 10);
 
@@ -71,10 +96,13 @@ function withdrawSpecific(event) {
     console.log(`Dispensing ${notes[5]} $5 notes, ${notes[10]} $10 notes, ${notes[50]} $50 notes, ${notes[100]} $100 notes.`);
 
     // Call the backend to update ATM notes
-    updateATMNotes(notes, atmId);
+    const success = await updateATMNotes(notes, atmId);
 
-    // Redirect to processing page
-    window.location.href = "/processing";
+    if (success){
+        // Redirect to processing page
+        window.location.href = "/processing";
+    }
+  
 }
 
 /**
@@ -95,7 +123,7 @@ function calculateNotes(amount) {
 }
 
 
-function voiceActivated(){
+async function voiceActivated(){
     let amount = 0;
     const sessionAmt = sessionStorage.getItem('amount');
     
@@ -121,13 +149,18 @@ function voiceActivated(){
         return;
     }
 
+    console.log(amount)
+    //withdrawSpecific(amount);
+
     const notes = calculateNotes(amount);
 
     console.log(`Dispensing ${notes[5]} $5 notes, ${notes[10]} $10 notes, ${notes[50]} $50 notes, ${notes[100]} $100 notes.`);
 
-    // Call the backend to update ATM notes
-    updateATMNotes(notes, atmId);
-
-    // Redirect to processing page
-    //window.location.href = "/processing";
+    // // Call the backend to update ATM notes
+    const success = await updateATMNotes(notes, atmId);
+    console.log("SUCCESS: ", success)
+    if (success){
+        // Redirect to processing page
+        window.location.href = "/processing";
+    }
 }

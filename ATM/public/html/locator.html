@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASD</title>
+    <script src="../js/locator.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <link rel="stylesheet" href="../css/locator.css">
+</head>
+<body>
+    <h1>Scan to Get Directions to the Nearest OCBC ATM</h1>
+    <button onclick="getNearestATM()">OPEN</button>    
+
+    <div id = "locatorModal" class="hiddenModal">
+        <div class="modal-content">
+            <div id="modal-header">ATM is Out of Cash</div>
+            <div>
+                <p>Address:</p>
+                <p id="modal-address">ACUTAL ADDRESS</p>                
+            </div>
+            <div>
+                <p>Distance:</p>
+                <p id="modal-distance">123m</p>                
+            </div>
+            <div>
+                <p>Postal Code:</p>
+                <p id="modal-code">600123</p>                
+            </div>
+            <div id="modal-prompt">Scan to get directions to the ATM</div>
+            <div id="qr_code"></div>
+            <button id="closeBtn" onclick="closeModal()">&times;</button>
+        </div>
+    </div>
+</body>
+</html>

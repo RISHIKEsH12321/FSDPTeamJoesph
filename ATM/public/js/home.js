@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const accountRes = await fetch(`/home/${accountId}`);
         
         accountData = await accountRes.json();
+        console.log(accountData);
         sessionStorage.setItem('name', accountData[0].name);
         sessionStorage.setItem('myAccNo', accountData[0].accountNumber);
         console.log(sessionStorage.getItem('name'));

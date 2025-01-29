@@ -68,9 +68,14 @@ async function getVoiceIntructions(req, res) {
     const result = await geminiChat.sendMessage(fullPrompt);
     const response = await result.response;
     const text = await response.text();
-    // console.log(text);
+    const a = text.replace("json", " ");
+    // console.log(a);
+    const b = a.replace("```", "")
+    // console.log(b);
+    const c = b.replace("```", "")
+    // console.log(c);
     
-    res.status(200).json(text);
+    res.status(200).json(c);
   } catch (error) {
     console.error("Error starting chat with Gemini:", error);
     throw new Error("Error starting chat with Gemini");

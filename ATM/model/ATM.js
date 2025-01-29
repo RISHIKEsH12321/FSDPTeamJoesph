@@ -76,7 +76,9 @@ class ATM {
             connection.close();
 
             if (result.rowsAffected[0] === 0) {
-                throw new Error("Insufficient notes available in the ATM for the withdrawal.");
+                // throw new Error("Insufficient notes available in the ATM for the withdrawal.");
+                //console.log("Insufficient notes available in the ATM for the withdrawal.");
+                return { success: false, message: "Insufficient notes available in the ATM for the withdrawal." }
             }
 
             return { success: true, message: "Withdrawal successful." };

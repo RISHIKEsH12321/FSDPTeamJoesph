@@ -141,6 +141,10 @@ app.get("/withdrawal", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "withdrawal.html"));
 });
 
+app.get("/locator", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "locator.html"));
+});
+
 //ATM Notes Amount
 app.get("/ATM-details/:atmID", ATM.getATMDetailsById);
 app.put("/ATM-decrease", ATM.withdrawFromATM);

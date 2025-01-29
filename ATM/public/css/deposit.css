@@ -48,3 +48,7 @@ body {
 .optionButton:hover {
     background-color: #e0e0e0;
 }
+
+.denom{
+    font-size: calc(1.275rem + .3vw);
+}

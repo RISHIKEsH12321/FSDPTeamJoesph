@@ -277,16 +277,19 @@ startRecordingButton.addEventListener('click', () => {
             })
             .then(response => response.json())
             .then(result => {
-                console.log("Server Response:", result);
-                if (result === "Nothing") {
-                    console.log("Server response is 'Nothing'.");
-                    const nothingUtterance = new SpeechSynthesisUtterance("The server returned 'Nothing'.");
+                //console.log("Server Response:", result);
+                //console.log(result);
+                console.log(JSON.parse(result));
+                const jsonResult = JSON.parse(result);
+
+                if (jsonResult.task === "Nothing") {
+                    //console.log("Server response is 'Nothing'.");
+                    const nothingUtterance = new SpeechSynthesisUtterance("Voice was not recognised or the action is not valid.");
                     nothingUtterance.lang = 'en-US';
                     window.speechSynthesis.speak(nothingUtterance);
                 } else {
                     // Handle other server responses
-                    console.log("Server response is not 'Nothing':", result);
-                    handleServerResponse(result);
+                    handleServerResponse(jsonResult);
                 }
         
             })
@@ -326,54 +329,75 @@ function speakText(text) {
 
 
 function handleServerResponse(response) {
-    if (!response) {
+    console.log(response);
+    if (!response || !response.task) {
         console.error("Invalid response from server.");
         return;
     }
 
     // Store amounts in session storage if applicable
-    const amountRegex = /\b(\d+)\b/; // Regex to find amounts (numbers)
-    const amountMatch = response.match(amountRegex);
-    if (amountMatch) {
-        const amount = amountMatch[1];
-        sessionStorage.setItem('amount', amount);
+    if (response.amount) {
+        sessionStorage.setItem('amount', response.amount);
     }
 
-    // Check and navigate based on the response
-    if (response.includes("Withdraw")) {
-        window.location.href = '/withdraw';
+    // Check and navigate based on the response task
+    switch (response.task) {
+        case "Withdraw":
+            window.location.href = '/withdrawal'
+            break;
         
-        // const amtElement = document.getElementById('amt');
-        // const submitElement = document.getElementById('depositSubmit');
-        // if (amtElement && submitElement) {
-        //     amtElement.value = sessionStorage.getItem('amount') || '';
-        //     submitElement.click();
-        // }
-    } else if (response.includes("Deposit")) {
-        window.location.href = '/deposit';
-        const confirmElement = document.getElementById('confirm');
-        if (confirmElement) {
-            confirmElement.click();
-        }
-    } else if (response.includes("Transfer")) {
-        window.location.href = '/transferFunds';
-        const confirmElement = document.getElementById('confirm');
-        if (confirmElement) {
-            confirmElement.click();
-        }
-    } else if (response.includes("Report")) {
-        window.location.href = '/graph1';
-    } else if (response.includes("Exit")) {
-        window.location.href = '/index';
-    } else if (response.includes("View Tutorials")) {
-        window.location.href = '/tutorial';
-    } else if (response.includes("Activate Tutorial")) {
-        console.log("Activating tutorial is not yet implemented.");
-    } else if (response.includes("Register Face ID")) {
-        window.location.href = '/addface';
-    } else if (response.includes("Report A Problem")) {
-        console.log("Reporting a problem is not yet implemented.");
-    } else {
-        console.warn("Unrecognized response action:", response);
+        case "Deposit":
+            sessionStorage.setItem('typeOfAccount', response.type);
+            window.location.href = '/deposit';        
+            break;
+        
+        case "Transfer":
+            window.location.href = '/transferFunds';
+            break;
+        
+        case "Report":
+            window.location.href = '/graph1';
+            break;
+        
+        case "Exit":
+            window.location.href = '/index';
+            break;
+        
+        case "ViewTutorials":
+            window.location.href = '/tutorial';
+            break;
+        
+        case "ActivateTutorial":
+            sessionStorage.setItem('typeForTutorial', response.type);
+            window.location.href = '/tutorial';
+            //console.log("Activating tutorial is not yet implemented.");
+            break;
+        
+        case "RegisterFaceID":
+            window.location.href = '/addface';
+            break;
+        
+        case "ReportProblem":
+            openContactForm();
+            console.log("Reporting a problem is not yet implemented.");
+            break;
+        
+        default:
+            console.warn("Unrecognized response action:", response);
+            break;
     }
+}
+
+
+function openContactForm() {
+    const contactFormModal = document.getElementById("contactFormModal");
+    const timestampField = document.getElementById("timestamp");
+    const contactForm = document.getElementById("contactForm");
+
+    contactForm.reset();
+
+    const currentDate = new Date();
+    timestampField.value = currentDate.toLocaleString();
+
+    contactFormModal.style.display = "block";
 }
