@@ -47,18 +47,17 @@ body {
     background-color: #0056b3;
 }
 
-#delete, #Continue{
+#delete, #Continue2{
     background-color: #ff4d4d;
 }
 
 #delete:hover, #Continue:hover {
     background-color: #cc0000;
 }
-.denom{
-    font-size: calc(1.275rem + .3vw);
-}
+
 h2{
     margin-bottom: 10px;
     font-size: 24px;
     color: #333;
-    
+    text-decoration: underline;
+}

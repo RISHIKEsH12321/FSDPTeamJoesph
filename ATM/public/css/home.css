@@ -76,6 +76,12 @@ body {
     border-radius: 5px; /* Rounded corners */
     outline: none; /* Remove outline on focus */
     transition: border-color 0.3s ease; /* Smooth transition */
+    
+    /* Right-alignment */
+    margin-left: auto; /* Push it to the right */
+    margin-right: 120px; /* Optional: Add some spacing from the right edge */
+    display: block; /* Ensure it behaves as a block element */
+  
 }
 
 /* Add hover effect */
@@ -97,8 +103,6 @@ body {
     color: #333;
     background-color: #fff;
 }
-
-} */
 
 #divider {
     position: fixed;
@@ -172,3 +176,88 @@ body {
     z-index: 1;
 }
 
+    
+/* Chatbot logo (circle icon) */
+#chatbot-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #e11a27;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: fixed;
+    left: 20px;
+    bottom:20px;
+    z-index: 1002; /* Ensure it is above the wrapper */
+  }
+  
+  /* Full-screen wrapper for centering the chatbot */
+  #chatbot-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: background dimming */
+    z-index: 1001; /* Make sure the chat container is behind the logo */
+    display: none; /* Hidden by default */
+  }
+  
+  /* Chatbox Styling */
+  #chatbot-container {
+    width: 600px;
+    height: 500px;
+    border: 1px solid #e11a27;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  
+      #messages {
+        height: 80%;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+  
+      .message {
+        margin: 5px 0;
+      }
+  
+      .user-message {
+        text-align: right;
+        color: #007bff;
+      }
+  
+      .bot-message {
+        text-align: left;
+        color: #e11a27;
+      }
+  
+      #chat-input {
+        width: 80%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+  
+      #send-btn {
+        width: 18%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+      }
+  
+      #send-btn:hover {
+        background-color: #0056b3;
+      }
