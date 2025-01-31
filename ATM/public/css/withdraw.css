@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.keypad-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#display {
+    width: 300px;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: right;
+    height: 50px;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.key {
+    font-size: 18px;
+    padding: 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.key:hover {
+    background-color: #0056b3;
+}
+
+#delete, #Continue2{
+    background-color: #ff4d4d;
+}
+
+#delete:hover, #Continue:hover {
+    background-color: #cc0000;
+}
+
+h2{
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #333;
+    text-decoration: underline;
+}

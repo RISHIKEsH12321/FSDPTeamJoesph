@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM Fingerprint Login</title>
+  <style>
+    /* General styling for full-screen, center alignment */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #e8edf2;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+    
+    /* Back Button Styling */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #00509e;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button::before {
+      content: '←'; /* Left arrow character */
+      font-size: 24px;
+      color: white;
+      line-height: 1; /* Center arrow vertically */
+    }
+
+    /* Container styling */
+    .atm-container {
+      width: 370px;
+      padding: 30px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    /* Heading and Text */
+    h2 {
+      margin: 0 0 20px;
+      color: #00509e;
+      font-size: 24px;
+    }
+    p {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    /* Fingerprint Box */
+    .fingerprint-box {
+      width: 180px;
+      height: 180px;
+      border: 4px solid #00509e;
+      border-radius: 15px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    
+    /* Fingerprint Icon */
+    .fingerprint-icon {
+      width: 140px;
+      height: 140px;
+      background-image: url('../images/R.png'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Footer Text */
+    .footer-text {
+      font-size: 12px;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <div class="back-button" onclick="goBack()"></div>
+
+  <!-- ATM Container -->
+  <div class="atm-container">
+    <h2>Fingerprint Login</h2>
+    <p>Please scan your fingerprint to access your account.</p>
+
+    <!-- Fingerprint Box with Icon -->
+    <div class="fingerprint-box" onclick="startScan()">
+      <div class="fingerprint-icon"></div>
+    </div>
+
+    <!-- Footer Text -->
+    <p class="footer-text">Secured by OCBC</p>
+  </div>
+
+  <!-- JavaScript for Back Navigation and Redirect -->
+  <script>
+    function goBack() {
+      window.history.back(); // Go to the previous page
+    }
+
+    function startScan() {
+      const fingerprintBox = document.querySelector('.fingerprint-box');
+      fingerprintBox.style.transform = 'scale(1.1)'; // Enlarge the box slightly
+
+      // Redirect to the next page after a brief delay
+      setTimeout(() => {
+        window.location.href = "/home"; 
+      }, 500); // Delay to mimic scan duration
+    }
+  </script>
+
+</body>
+</html>

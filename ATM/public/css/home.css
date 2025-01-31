@@ -1,40 +1,263 @@
-.btn.btn-secondary{
-    width: 100%;
-    border: none;
-    border-radius: 10px;
-    padding: 20px 0;
-    font-size: 1.2em;
-}
-.btn.btn-light{
-    width: 100%;
-    border: none;
-    border-radius: 10px;
-    padding: 20px 0;
-    font-size: 1.2em;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ececec !important;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
+    background-size: 50px 50px;
+    margin: 0;
+    padding: 0;
 }
 
-#tutorial{
-    cursor: pointer;
+#logo{
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 200px; 
+    height: auto; 
+    z-index: 1000;
 }
 
-#exit{
-    cursor: pointer;
-}
 
 #wHint{
     position: absolute;
-    top: 50%;
-    left: 45%;
+    top: 60%;
+    left: 40%;
+}
+
+#headerContainer{
+    padding-top: 30px;
+}
+
+#headerContainer2{
+    padding-top: 80px;
 }
 
 #dHint{
     position: absolute;
-    top: 35%;
-    left: 45%;
+    top: 50%;
+    left: 55%;
 }
 
 #tHint{
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 55%;
 }
+
+#depositSubmit{
+    width: 20%;
+    padding: 10px 0px 10px 0px;
+    margin-top: 5px;
+    font-size: 1.2em;
+}
+#buttonsContainer {
+    width: 18vw;
+    padding-right: 50px;
+    /* border-right: 3px solid black; */
+}
+
+#moreServicesContainer{
+    margin-left: 90px;
+    width: 18vw;
+}
+
+/* #buttonsContainer button{
+    background-color: #6c757d;
+
+}
+
+/* Style the select dropdown */
+#languageSelector {
+    width: 200px; /* Adjust width as needed */
+    padding: 10px;
+    font-size: 16px;
+    color: #333; /* Text color */
+    background-color: #f9f9f9; /* Background color */
+    border: 2px solid #ccc; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+    outline: none; /* Remove outline on focus */
+    transition: border-color 0.3s ease; /* Smooth transition */
+    
+    /* Right-alignment */
+    margin-left: auto; /* Push it to the right */
+    margin-right: 120px; /* Optional: Add some spacing from the right edge */
+    display: block; /* Ensure it behaves as a block element */
+  
+}
+
+/* Add hover effect */
+#languageSelector:hover {
+    border-color: #007bff; /* Change border color on hover */
+    cursor: pointer;
+}
+
+/* Add focus effect */
+#languageSelector:focus {
+    border-color: #007bff; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow */
+}
+
+/* Style the options */
+#languageSelector option {
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+}
+
+#divider {
+    position: fixed;
+    top: 20%;         
+    bottom: 20%;      
+    left: 50%;      
+    width: 3px;     
+    background-color: #6c757d; 
+    transform: translateX(-50%); 
+}
+
+
+/* Rishi's Voice Command CSS */
+.mic-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #e11a27;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: none;
+    outline: none;
+    position: fixed; /* Fixes the position on the page */
+    top: 30px; /* Adjust vertical spacing from the top */
+    right: 270px; /* Adjust horizontal spacing from the right */
+    z-index: 1000; /* Ensures it stays above other elements */
+}
+
+
+.mic-button svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    text-align: center;
+}
+
+.popup .mic-record-button {
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.popup .mic-record-button svg {
+    width: 40px;
+    height: 40px;
+    fill: #e11a27;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1;
+}
+
+    
+/* Chatbot logo (circle icon) */
+#chatbot-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #e11a27;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: fixed;
+    left: 20px;
+    bottom:20px;
+    z-index: 1002; /* Ensure it is above the wrapper */
+  }
+  
+  /* Full-screen wrapper for centering the chatbot */
+  #chatbot-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: background dimming */
+    z-index: 1001; /* Make sure the chat container is behind the logo */
+    display: none; /* Hidden by default */
+  }
+  
+  /* Chatbox Styling */
+  #chatbot-container {
+    width: 600px;
+    height: 500px;
+    border: 1px solid #e11a27;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  
+      #messages {
+        height: 80%;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+  
+      .message {
+        margin: 5px 0;
+      }
+  
+      .user-message {
+        text-align: right;
+        color: #007bff;
+      }
+  
+      .bot-message {
+        text-align: left;
+        color: #e11a27;
+      }
+  
+      #chat-input {
+        width: 80%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+  
+      #send-btn {
+        width: 18%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+      }
+  
+      #send-btn:hover {
+        background-color: #0056b3;
+      }

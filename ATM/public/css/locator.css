@@ -1,0 +1,99 @@
+/* Modal Background */
+
+#locator-modal-button{
+    display: none;
+}
+.hiddenModal {
+    display: none !important; /* Hidden by default */
+    position: fixed; /* Fixed at the top of the page */
+    z-index: 1; /* Sit on top of other content */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    padding: 20px;
+}
+
+.shownModal {
+    display: block !important; /* Hidden by default */
+    position: fixed; /* Fixed at the top of the page */
+    z-index: 1; /* Sit on top of other content */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    padding: 20px;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto; /* Center the modal */
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+    text-align: center;
+}
+
+/* Modal Header */
+#modal-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e74c3c; /* Red color for "Out of Cash" message */
+    margin-bottom: 15px;
+}
+
+/* Address and Distance Styling */
+p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+/* QR Code Area */
+#qr_code {
+    margin-top: 20px;
+    width: 128px;
+    height: 128px;
+    margin: 0 auto; /* Center the QR Code */
+}
+
+/* Close Button Styling */
+#closeBtn {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Show Modal When Activated */
+.hiddenModal.show {
+    display: block; /* Show the modal */
+}
+
+/* Modal Prompt Styling */
+#modal-prompt {
+    margin-top: 15px;
+    font-size: 1em;
+    color: #555;
+}
+
+/* Address and Distance Layout */
+#modal-address, #modal-distance {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Style for modal when it is open */
+.hiddenModal.open {
+    display: block; /* Show the modal */
+}

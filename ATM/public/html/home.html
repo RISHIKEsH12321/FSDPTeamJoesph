@@ -4,70 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="../css/Helpbuttonstyle.css">
     <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/commonTutorial.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    
+    <!-- For Voice Activated Command -->
+    <script src="../js/voiceActivate.js" defer></script>
+
+    <!-- For Nearest ATM Locator -->
+    <script src="../js/locator.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <link rel="stylesheet" href="../css/locator.css">
 </head>
 <body>
+    <a href="/home"><img id="logo" src="../images/OCBC_logo.png" title="OCBC Logo"></a>
     <!-- Top/header section -->
-    <div class="container mt-3">
+    <div class="container mt-3" id="headerContainer">
         <div class="d-flex justify-content-between">
-            <div class="flex-grow-1">
-                <h2>Hello!</h2>
+            <div class="flex-grow-1" id="headerContainer2">
+                <h2 id ="greeting">Hello!</h2>
                 <h3>What would you like to do today?</h3>
             </div>
             <div class="d-flex flex-grow-0">
                 <p id="tutorial" onclick="showTutorial()" class="mb-0 px-2">Tutorial</p>
                 <br>
-                <p> | </p>
+
+                <span class="separator">|</span>
+
                 <br>
                 <p id="exit" onclick="exit()" class="mb-0 px-2">Exit</p>
             </div>
         </div>
     </div>
 
+    <select id="languageSelector">
+        <option value="EN">English</option>
+        <option value="ZH">Chinese</option>
+        <option value="ES">Spanish</option>
+        <option value="FR">French</option>
+        <option value="DE">German</option>
+        <option value="RU">Russian</option>
+        <option value="KO">Korea</option>
+        <!-- Add more languages as needed -->
+    </select>
+      
+
+    <button type="button" class="mic-button" id="open-popup">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 9.4V5C15 3.34315 13.6569 2 12 2C10.8224 2 9.80325 2.67852 9.3122 3.66593M12 19V22M8 22H16M3 3L21 21M5.00043 10C5.00043 10 3.50062 19 12.0401 19C14.51 19 16.1333 18.2471 17.1933 17.1768M19.0317 13C19.2365 11.3477 19 10 19 10M12 15C10.3431 15 9 13.6569 9 12V9L14.1226 14.12C13.5796 14.6637 12.8291 15 12 15Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <p>Press the button to start recording:</p>
+        <button class="mic-record-button" id="start-recording">
+            <svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512"><path d="m439.5,236c0-11.3-9.1-20.4-20.4-20.4s-20.4,9.1-20.4,20.4c0,70-64,126.9-142.7,126.9-78.7,0-142.7-56.9-142.7-126.9 0-11.3-9.1-20.4-20.4-20.4s-20.4,9.1-20.4,20.4c0,86.2 71.5,157.4 163.1,166.7v57.5h-23.6c-11.3,0-20.4,9.1-20.4,20.4 0,11.3 9.1,20.4 20.4,20.4h88c11.3,0 20.4-9.1 20.4-20.4 0-11.3-9.1-20.4-20.4-20.4h-23.6v-57.5c91.6-9.3 163.1-80.5 163.1-166.7z"/><path d="m256,323.5c51,0 92.3-41.3 92.3-92.3v-127.9c0-51-41.3-92.3-92.3-92.3s-92.3,41.3-92.3,92.3v127.9c0,51 41.3,92.3 92.3,92.3zm-52.3-220.2c0-28.8 23.5-52.3 52.3-52.3s52.3,23.5 52.3,52.3v127.9c0,28.8-23.5,52.3-52.3,52.3s-52.3-23.5-52.3-52.3v-127.9z"/></svg>
+        </button>
+    </div>
+  
+
     <!-- Cash service -->
     <div class="container mt-3">
         <div id="home" class="d-flex justify-content-between align-items-center">
-            <div class="row flex-grow-1">
-                <div class="col-6 mb-3">
-                    <button class="btn btn-secondary">$50</button>
+            <div class="row flex-grow-1" id="buttonsContainer">
+                <h3>Withdraw</h3>
+                <div class="col-6 mb-3" >
+                    <button class="btn btn-secondary" onclick="sendWithdrawNotification(50); withdraw(50)">$50</button>
                 </div>
                 <div class="col-6 mb-3">
-                    <button class="btn btn-secondary">$80</button>
+                    <button class="btn btn-secondary" onclick="sendWithdrawNotification(80); withdraw(80)">$80</button>
                 </div>
                 <div class="col-6 mb-3">
-                    <button class="btn btn-secondary">$100</button>
+                    <button class="btn btn-secondary" onclick="sendWithdrawNotification(100); withdraw(100)">$100</button>
                 </div>
                 <div class="col-6 mb-3">
-                    <button class="btn btn-secondary">$500</button>
+                    <button class="btn btn-secondary" onclick="sendWithdrawNotification(500); withdraw(500)">$500</button>
                 </div>
                 <div class="col-12 mb-3">
-                    <button class="btn btn-secondary">Other cash amount</button>
+                    <!-- <button class="btn btn-secondary" onclick="moreDeposit()">Other cash amount</button> -->
+                    <a href="/withdrawal"><button class="btn btn-secondary" >Other cash amount</button></a>
                 </div>
             </div>
-            <div class="row flex-grow-1 px-3">
+            <div class="row flex-grow-1 px-3" id="moreServicesContainer">
                 <div class="col-6 mb-3">
-                    <button class="btn btn-secondary service">Deposit cash</button>
+                    <button class="btn btn-secondary service" onclick="gotoDeposit()">Deposit cash</button>
                 </div>
-                <div class="col-6 mb-3">
-                    <button class="btn btn-secondary service">Balance inquiry</button>
+                <div class="col-6 mb-3" >
+                    <a href="/graph1"><button class="btn btn-secondary service" >Balance inquiry</button></a>
                 </div>
                 <div class="col-12 mb-3">
                     <button onclick="showMoreService()" class="btn btn-light">More services</button>
                 </div>
-            </div>
+            </div><div id="divider"></div>
         </div>
+        
         <!-- Non-cash/More services  -->
         <div id="moreService" class="d-flex justify-content-between align-items-center">
             <div class="row">
                 <div class="col-12">
-                    <p><strong>Non-cash service</strong></p>
+                    <h3>Non-cash services</h3>
                 </div>
                 <div class="col-4 mb-3">
                     <button class="btn btn-secondary">Set up quick transaction</button>
                 </div>
                 <div class="col-4 mb-3">
-                    <button class="btn btn-secondary">Balance Inquiry</button>
+                    <a href="/graph1"><button class="btn btn-secondary" >Balance inquiry</button></a>
                 </div>
                 <div class="col-4 mb-3">
                     <button class="btn btn-secondary">Bill Payment</button>
@@ -79,16 +120,184 @@
                     <button class="btn btn-secondary">CPF services</button>
                 </div>
                 <div class="col-4 mb-3">
-                    <button class="btn btn-secondary">Investment services</button>
+                    <a href="/addface"><button class="btn btn-secondary">Add Facial Recognition</button></a>
                 </div>
             </div>
         </div>
+        <!-- Deposit -->
+        <div id="deposit" class="d-flex justify-content-between align-items-center">
+
+            <div class="row flex-grow-1">
+                <h4 class="text-center">Quick Withdraw</h4>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$50</button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$80</button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$100</button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$500</button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$1000</button>
+                </div>
+                <div class="col-6 mb-3">
+                    <button class="btn btn-secondary" onclick="gotoProcessing(event)">$2000</button>
+                </div>
+            </div>
+            <div class="row flex-grow-1 px-3">
+                <h4 class="text-center">Other cash amount</h4>
+                <form onsubmit="gotoProcessing(event)">
+                    <div>
+                        <input type="number" class="form-control" id="amt" placeholder="S$00.00" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button id="depositSubmit" type="submit" class="btn btn-secondary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chatbot Circle Logo (Chat Icon) -->
+    <div id="chatbot-logo"><span style="font-size: xx-large;">💬</span></div>
+    <div id="chatbot-wrapper">
+        <div id="chatbot-container">
+            <div id="messages"></div>
+            <input type="text" id="chat-input" placeholder="Type your query..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    
+    <!-- Help button/feature -->
+    <button id="helpButton" onclick="showHelp()">Need Help?</button>
+    <div id="hint"></div>
+
+    <div id="helpOptions" class="popup">
+        <span class="close" onclick="toggleHelp()">&times;</span>
+        <p>How can we assist you today?</p>
+        <div class="options">
+            <button onclick="showDescription('cardRetained')">Card Retained</button>
+            <button onclick="showDescription('transactionFailed')">Transaction Failed</button>
+            <button onclick="showDescription('accountBalance')">Account Balance Issue</button>
+            <button onclick="showDescription('incorrectPIN')">Incorrect PIN</button>
+            <button onclick="showDescription('technicalError')">Technical Error</button>
+            <button onclick="showDescription('cashNotDispensed')">Cash Not Dispensed</button>
+            <button class="report" onclick="openContactForm()">Report Problems</button>
+        </div>
+        <p id="supportContact" style="margin-top: 20px; font-size: 14px; color: #555;">For assistance, contact us at: <strong>1800 363 3333</strong></p>
     </div>
     
-    <div id="hint"></div>
+
+    <div id="contactFormModal" class="modal" style="display: none;">
+        <h2>Report a Problem</h2>
+        <form id="contactForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" required>
+            <p id="phoneError" style="color: red;"></p>
+
+            <label for="problemDescription">Describe the Issue:</label>
+            <textarea id="problemDescription" rows="4" required></textarea>
+
+            <label for="timestamp">Report Time:</label>
+            <input type="text" id="timestamp" readonly>
+
+            <button type="submit">Submit</button>
+            <button type="button" onclick="closeContactForm()">Close</button>
+        </form>
+    </div>
+
+    <div id="detailedInfo" class="detailed-info" style="display: none;">
+        <h2 id="infoTitle"></h2>
+        <p id="infoContent"></p>
+        <button onclick="hideDetails()">Close</button>
+    </div>
+
+
+    <!-- Modal For Nearst ATM -->
+    <button id="locator-modal-button" onclick="getNearestATM('ATM is Out of Cash')">Enable Modal</button>
+    <div id = "locatorModal" class="hiddenModal">
+        <div class="modal-content">
+            <div id="modal-header">ATM is Out of Cash</div>
+            <div>
+                <p>Address:</p>
+                <p id="modal-address">ACUTAL ADDRESS</p>                
+            </div>
+            <div>
+                <p>Distance:</p>
+                <p id="modal-distance">123m</p>                
+            </div>
+            <div>
+                <p>Postal Code:</p>
+                <p id="modal-code">600123</p>                
+            </div>
+            <div id="modal-prompt">Scan to get directions to the ATM</div>
+            <div id="qr_code"></div>
+            <button id="closeBtn" onclick="closeModal()">&times;</button>
+        </div>
+    </div>
+
+    <script src="../js/Helpbutton.js"></script>
+    <script>
+        document.getElementById("contactForm").onsubmit = function(e) {
+            e.preventDefault();
     
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const phoneError = document.getElementById("phoneError");
+    
+            phoneError.textContent = "";
+    
+            if (!isValidPhoneNumber(phoneNumber)) {
+                phoneError.textContent = "Please enter a valid phone number.";
+                phoneError.style.color = "red";
+                return;
+            }
+    
+            const report = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phoneNumber: phoneNumber,
+                problemDescription: document.getElementById("problemDescription").value,
+                timestamp: document.getElementById("timestamp").value
+            };
+    
+            // Send the data to the backend via a POST request
+            fetch('/submit-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(report)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById("contactForm").reset();
+                closeContactForm();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    </script>
+    <script src="../js/Helpbutton.js"></script>
     <script src="../js/home.js"></script>
     <script src="../js/commonTutorial.js"></script>
+    <!-- To Deduct Notes from the ATM -->
+    <script src="../js/withdrawal.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/translate.js"></script>
     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
 </body>
 </html>

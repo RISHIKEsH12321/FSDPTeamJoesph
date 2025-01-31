@@ -1,0 +1,114 @@
+/* Origianl */
+
+body {
+    /* font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0; */
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    background-color: #ececec !important;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 2px, transparent 1px);
+    background-size: 50px 50px;
+    margin: 0;
+    padding: 0;
+}
+
+
+#rectangle{
+    width: 35%;          /* Width of the rectangle */
+    height: 80px;         /* Height of the rectangle */
+    border: 5px solid #000;    /* Border color and thickness */
+    margin: 0px auto; 
+}
+
+#headerContainer{
+    padding-top: 30px;
+}
+
+#headerContainer2{
+    padding-top: 30px;
+}
+
+.OptionContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100vw;
+    margin: 0 auto;
+}
+
+.optionButton {
+    width: 300px;
+    height: 350px;
+    border: none;
+    background-color: #fff8f3;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 15px;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+.optionButton:hover {
+    background-color: #e0e0e0;
+}
+.keypad-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#display {
+    width: 300px;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: right;
+    height: 50px;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.key {
+    font-size: 18px;
+    padding: 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.key:hover {
+    background-color: #0056b3;
+}
+
+#delete, #Continue{
+    background-color: #ff4d4d;
+}
+
+#delete:hover, #Continue:hover {
+    background-color: #cc0000;
+}
+.denom{
+    font-size: calc(1.275rem + .3vw);
+}
+h2{
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #333;
+}

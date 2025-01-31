@@ -1,18 +1,23 @@
 //This file contains functions that are common in all my pages
 function showTutorial(){
-    const tutorialType = localStorage.getItem("tutorialType");
+    const tutorialType = sessionStorage.getItem("tutorialType");
     console.log("start of function"+tutorialType);
     if(tutorialType == null || tutorialType =="null"){
-        window.location.href = "tutorial.html";
+        window.location.href = "tutorial";
     }else{
         document.getElementById("tutorial").innerText = "Tutorial";
         document.getElementById("hint").style.display = "none";
-        localStorage.removeItem("tutorialType");
+        sessionStorage.removeItem("tutorialType");
     }
     
 }
 
 function exit(){
-    localStorage.clear();
-    window.location.href="index.html";
+    sessionStorage.clear();
+    window.location.href="index";
+}
+
+function gotoProcessing(e){
+    e.preventDefault();
+    window.location.href="processing";
 }

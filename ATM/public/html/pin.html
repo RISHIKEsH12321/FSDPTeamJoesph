@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATM PIN Entry</title>
+  <style>
+    /* General styling */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #e8edf2;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    /* Back Button Styling */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #00509e;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button::before {
+      content: '←'; /* Left arrow character */
+      font-size: 24px;
+      color: white;
+      line-height: 1; /* Center arrow vertically */
+    }
+
+    /* ATM Container */
+    .atm-container {
+      width: 370px;
+      padding: 30px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    /* Heading */
+    h2 {
+      margin: 0 0 20px;
+      color: #00509e;
+      font-size: 24px;
+    }
+
+    /* PIN Input styling */
+    .pin-input {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .pin-box {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #00509e;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      background-color: #f5f5f5;
+      cursor: pointer;
+    }
+
+    /* Footer Text */
+    .footer-text {
+      font-size: 12px;
+      color: #777;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <div class="back-button" onclick="goBack()"></div>
+
+  <!-- ATM Container -->
+  <div class="atm-container">
+    <h2>Enter Your PIN</h2>
+    <p>Please enter your 6-digit PIN to continue.</p>
+
+    <!-- PIN Input Boxes -->
+    <div class="pin-input">
+      <input type="text" id="pin1" class="pin-box" maxlength="1" oninput="moveFocus(this, 'pin2')" />
+      <input type="text" id="pin2" class="pin-box" maxlength="1" oninput="moveFocus(this, 'pin3')" />
+      <input type="text" id="pin3" class="pin-box" maxlength="1" oninput="moveFocus(this, 'pin4')" />
+      <input type="text" id="pin4" class="pin-box" maxlength="1" oninput="moveFocus(this, 'pin5')" />
+      <input type="text" id="pin5" class="pin-box" maxlength="1" oninput="moveFocus(this, 'pin6')" />
+      <input type="text" id="pin6" class="pin-box" maxlength="1" oninput="checkPin()" />
+    </div>
+
+    <!-- Footer Text -->
+    <p class="footer-text">Secured by OCBC</p>
+  </div>
+
+  <!-- JavaScript for navigation -->
+  <script>
+    // Go back to the previous page
+    function goBack() {
+        window.location.href = "/index";
+    }
+
+    // Move focus to next input box
+    function moveFocus(currentInput, nextInputId) {
+      if (currentInput.value.length === currentInput.maxLength) {
+        document.getElementById(nextInputId).focus();
+      }
+    }
+
+    // Check if all PIN digits are entered and redirect
+    /* function checkPin() {
+      const pin = [
+        document.getElementById("pin1").value,
+        document.getElementById("pin2").value,
+        document.getElementById("pin3").value,
+        document.getElementById("pin4").value,
+        document.getElementById("pin5").value,
+        document.getElementById("pin6").value
+      ];
+
+      if (pin.join('').length === 6) {
+        window.location.href = "/home"; 
+      }
+    } */
+    async function checkPin() {
+    const pin = [
+      document.getElementById("pin1").value,
+      document.getElementById("pin2").value,
+      document.getElementById("pin3").value,
+      document.getElementById("pin4").value,
+      document.getElementById("pin5").value,
+      document.getElementById("pin6").value,
+    ].join("");
+
+    if (pin.length === 6) {
+      try {
+        const response = await fetch("/validate-pin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert(result.message);
+          window.location.href = "/home"; // Redirect on success
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error("Error validating PIN:", error);
+        alert("An error occurred. Please try again.");
+      }
+    } else {
+      alert("Please enter a valid 6-digit PIN.");
+    }
+  }
+
+  </script>
+
+</body>
+</html>

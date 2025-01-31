@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        #video-container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #007bff;
+        }
+        #message {
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">Scanning QR Code...</div>
+    <div id="video-container">
+        <video id="video" autoplay muted></video>
+    </div>
+
+    <!-- Load jsQR library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+    <script>
+        async function setupCamera() {
+            const video = document.getElementById('video');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                return new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve(video);
+                    };
+                });
+            } catch (error) {
+                console.error("Error accessing webcam:", error);
+                alert("Webcam access is needed for QR code scanning. Please check permissions.");
+            }
+        }
+
+        function scanQRCode() {
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            setInterval(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const decodedQR = jsQR(imageData.data, canvas.width, canvas.height);
+
+                if (decodedQR) {
+                    handleQRCode(decodedQR.data); // Process the QR code data
+                }
+            }, 500);
+        }
+
+        async function handleQRCode(qrData) {
+            const pinMatch = qrData.match(/PIN:(\d{6})/);
+            const amountMatch = qrData.match(/Amount:(\d+)/);
+
+            if (pinMatch && amountMatch) {
+                const pin = pinMatch[1];
+                const amount = amountMatch[1];
+
+                // Validate the PIN using the server
+                try {
+                    const response = await fetch("/validate-pin", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ pin }),
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        // Store the amount in session storage
+                        sessionStorage.setItem("withdrawAmount", amount);
+                        alert(`PIN validated. Proceeding to withdrawal confirmation. Amount: $${amount}`);
+                        window.location.href = "/confirmwithdraw"; // Redirect to confirmation page
+                    } else {
+                        alert("Invalid PIN. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error validating PIN:", error);
+                    alert("An error occurred while validating the PIN. Please try again.");
+                }
+            } else {
+                alert("Invalid QR code format.");
+            }
+        }
+
+        async function init() {
+            await setupCamera();
+            scanQRCode();
+        }
+
+        init();
+    </script>
+</body>
+</html>

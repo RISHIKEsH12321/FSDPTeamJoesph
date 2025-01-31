@@ -15,7 +15,11 @@ body#helpID {
 
 #helpButton {
     position: absolute;
+<<<<<<< HEAD
     top: 20px;
+=======
+    bottom: 20px;
+>>>>>>> 69bedcbbc3f3c47c9e1b5129a65c99887439e2b5
     right: 20px;
     padding: 10px 20px;
     font-size: 16px;
@@ -113,10 +117,18 @@ body#helpID {
 
 
 .modal {
+<<<<<<< HEAD
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+=======
+    display: none; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /*transform: translate(-50%, -50%);*/ 
+>>>>>>> 69bedcbbc3f3c47c9e1b5129a65c99887439e2b5
     background-color: white;
     padding: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -126,6 +138,10 @@ body#helpID {
     z-index: 1000;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 69bedcbbc3f3c47c9e1b5129a65c99887439e2b5
 .modal form label {
     display: block;
     margin-top: 10px;

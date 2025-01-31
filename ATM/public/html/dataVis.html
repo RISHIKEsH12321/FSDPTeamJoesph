@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Report</title>
+
+    <!-- For the chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+    <!-- For the pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- ZIP File -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+    <!-- <script type="module" src="../js/reportCreation.js"></script> -->
+
+    <!-- Lottie Animation -->
+    <!-- Loading -->
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>  
+    <!-- Completed -->
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script> 
+
+
+    <script src="../js/dataVis.js" defer></script>
+    <link rel="stylesheet" href="../css/dataVis.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <a href="/home"><img id="logo" src="../images/OCBC_logo.png" title="OCBC Logo"></a>
+        
+        <div class="headerContainer">
+            <a href="/home" class="headerOptions"><p >Home</p></a>            
+            <br>
+            <p style="font-size: 20px; margin: 0;"> | </p>
+            <br>
+            <a href="/index" class="headerOptions"><p >Exit</p></a>
+        </div>
+
+        <h1 id="header">Visualise Your Finance</h1>
+
+        <div id="cardContainer">
+            <div class="chart-card" onclick="toggleChart('chart1Container')">
+                <p>Personal Transactions</p>
+                <div id="chart1Container" class="chart-container hidden">
+                    <canvas id="chart1" class="chart"></canvas>
+                </div>            
+            </div>
+
+            <div class="chart-card" onclick="toggleChart('chart2Container')">
+                <p>Spending Categories</p>
+                <div id="chart2Container" class="chart-container hidden">
+                    <canvas id="chart2" class="chart"></canvas>
+                </div>            
+            </div>
+            
+            <div class="chart-card" onclick="toggleChart('chart3Container')">
+                <p>Amount Spent In Categories</p>
+                <div id="chart3Container" class="chart-container hidden">
+                    <canvas id="chart3" class="chart"></canvas>
+                </div>            
+            </div>
+            
+            <div class="chart-card" onclick="toggleChart('chart4Container')">
+                <p>Income vs Expenses</p>
+                <div id="chart4Container" class="chart-container hidden">
+                    <canvas id="chart4" class="chart"></canvas>
+                </div>            
+            </div>
+            
+            <div class="chart-card" onclick="toggleChart('chart5Container')">
+                <p>Common Transaction Dates</p>
+                <div id="chart5Container" class="chart-container hidden">
+                    <canvas id="chart5" class="chart"></canvas>
+                </div>            
+            </div>
+            
+            <div class="chart-card" onclick="toggleChart('chart6Container')">
+                <p>Balance</p>
+                <div id="chart6Container" class="chart-container hidden">
+                    <canvas id="chart6" class="chart"></canvas>
+                </div>            
+            </div>        
+        
+        </div>
+
+        <button id="reportBtn" onclick="generateFinancialReportPDF()">Generate Financial Report</button>
+
+        
+    </div>  
+    
+    <dotlottie-player id = "loading-animation"src="https://lottie.host/220d5e89-673c-4848-abfb-429f726b188f/vsd6jKjegn.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+    <dotlottie-player id = "completed-animation"src="https://lottie.host/e6d9bea7-d9d9-40a8-afdd-098086cbea91/x2SS2QkBQI.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+    <div id="overlay"></div>
+
+    <div id="duplicate-container">
+        <canvas id="duplicate-chart1" class="chart"></canvas>
+        <canvas id="duplicate-chart2" class="chart"></canvas>
+        <canvas id="duplicate-chart3" class="chart"></canvas>
+        <canvas id="duplicate-chart4" class="chart"></canvas>
+        <canvas id="duplicate-chart5" class="chart"></canvas>
+        <canvas id="duplicate-chart6" class="chart"></canvas>        
+    </div>
+
+    
+    
+</body>
+</html>
