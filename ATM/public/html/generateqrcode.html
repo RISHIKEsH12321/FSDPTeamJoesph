@@ -59,7 +59,6 @@
     </div>
 
     <script>
-        const PIN = "123456";
         const EXPIRY_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
         const COUNTDOWN_INTERVAL = 1000; // Countdown update interval in milliseconds
         let expiryTimeout;
@@ -67,6 +66,8 @@
 
         // Function to generate a QR code
         function generateQRCode() {
+            const accountNumber = sessionStorage.getItem("accountNumber");
+            const pin = sessionStorage.getItem("pin");
             const amount = sessionStorage.getItem('withdrawAmount');
             const qrCodeElement = document.getElementById('qr-code');
             const amountDisplay = document.getElementById('amount-display');
@@ -78,9 +79,9 @@
             expiryMessage.textContent = "";
             countdownDisplay.textContent = "";
 
-            if (amount) {
-                const data = `PIN:${PIN},Amount:${amount}`;
-                const qrImg = document.createElement('img'); // Create an image element
+            if (accountNumber && pin && amount) {
+                const data = `Account:${accountNumber}, PIN:${pin}, Amount:${amount}`;
+                const qrImg = document.createElement("img"); // Create an image element
                 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data)}`;
                 qrImg.alt = "QR Code";
                 qrCodeElement.appendChild(qrImg); // Append the image to the QR code div
@@ -88,7 +89,7 @@
                 startCountdown(EXPIRY_TIME); // Start the countdown
                 startExpiryTimer(); // Start the expiry timer
             } else {
-                amountDisplay.textContent = "No withdrawal amount selected.";
+                amountDisplay.textContent = "Missing required data for QR code generation.";
             }
         }
 
