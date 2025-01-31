@@ -337,6 +337,8 @@ app.get("/voice", (req, res) => {
 
 //Louis Routes
 app.post("/validate-pin", account.validatePinController);
+app.post("/login", account.loginController);
+
 
 app.get("/print", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "fingerprint.html"));
@@ -358,6 +360,10 @@ app.get("/withdrawapp", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "withdrawapp.html"));
 });
 
+app.get("/loginapp", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "loginapp.html"));
+});
+
 app.get("/generateqrcode", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "generateqrcode.html"));
 });
@@ -369,6 +375,8 @@ app.get("/scanqrcode", (req, res) => {
 app.get("/confirmwithdraw", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "withdrawconfirmation.html"));
 });
+
+
 
 app.post('/submit-report', async (req, res) => {
     const { name, email, phoneNumber, problemDescription, timestamp } = req.body;

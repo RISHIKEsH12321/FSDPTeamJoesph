@@ -96,6 +96,33 @@ class Account {
           throw err;
         }
     }
+
+    static async verifyAccount(accountNumber, pin) {
+        try {
+            const connection = await sql.connect(dbConfig);
+            const sqlQuery = `
+                SELECT * FROM Account 
+                WHERE Account_Number = @accountNumber AND Account_PIN = @pin`;
+    
+            const request = connection.request();
+            request.input("accountNumber", sql.VarChar, accountNumber);
+            request.input("pin", sql.VarChar, pin);
+    
+            const result = await request.query(sqlQuery);
+            connection.close();
+    
+            if (result.recordset.length > 0) {
+                const row = result.recordset[0];
+                return new Account(row.AccountID, row.UserID, row.Account_Number, row.Account_PIN, row.Name);
+            } else {
+                return null; // No matching account found
+            }
+        } catch (err) {
+            console.error("Error verifying account:", err);
+            throw err;
+        }
+    }
+    
 }
 
 
