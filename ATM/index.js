@@ -7,6 +7,7 @@ const dbConfig = require("./dbConfig");
 const path = require("path");
 const nodemailer = require('nodemailer');
 const {GoogleGenerativeAI,HarmCategory,HarmBlockThreshold,} = require("@google/generative-ai");
+const qrcode = require('qrcode');
 
 const axios = require('axios');
 const dotenv = require('dotenv');
@@ -115,11 +116,6 @@ app.post("/translate", async (req, res) => {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
             }
-            // {
-            //     auth_key: apiKey,
-            //     text: text,
-            //     target_lang: target_lang,
-            // }
         );
 
         console.log("API response:", response.data);
@@ -184,13 +180,14 @@ Key Rules:
 - Use a stepwise approach to subtract the largest possible denomination from the requested amount until it reaches zero.
 - There is no $1 bill in the ATM.
 - Provide a clear breakdown of the denominations used, formatted as:
+  $100: 0
   $50: 0
   $10: 0
   $5: 0
-- If the requested amount cannot be fully dispensed in whole dollar bills (e.g., $37), return an error message with an explanation.
+- Only withdraw amounts that are a valid multiple of $5. If the requested amount cannot be fully dispensed using the available denominations (e.g., $37), return an error message explaining that the amount is not valid.
 - Always prioritize using the largest available denominations first, then move to smaller ones.
 - Respond only to ATM-related queries and reject unrelated questions politely.
-- Able to translate to english, chinese, spanish, french, german, russian and korean.
+- Able to translate to English, Chinese, Spanish, French, German, Russian, and Korean.
 `;
 
     // Modify the user query with system instructions
@@ -206,7 +203,58 @@ Key Rules:
       res.status(500).json({ response: "Sorry, something went wrong." });
     }
   });
-  
+
+// Endpoint to find nearest ATM of a specific brand and generate a Google Maps direction URL
+app.get('/nearest-atm', async (req, res) => {
+    const { lat, lon } = req.query;
+
+    if (!lat || !lon) {
+        return res.status(400).send('Latitude, Longitude, and brand are required');
+    }
+
+    try {
+        // Make a request to Google Places API to search for ATMs near the user's location
+        const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/place/nearbysearch/json`, 
+            {
+                params: {
+                    location: `${lat},${lon}`,
+                    type: 'bank,atm',
+                    key: process.env.GOOGLEMAP_API_KEY,
+                    rankby: "distance",
+                    name: "OCBC",
+                    keyword: "OCBC"
+                }
+            }
+        );
+
+        // Get the closest ATM (first in the list)
+        const closestATM = response.data.results[0];
+
+        if (!closestATM) {
+            return res.status(404).send('No ATMs found nearby');
+        }
+
+        // Create a Google Maps directions URL
+        const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${closestATM.geometry.location.lat},${closestATM.geometry.location.lng}`;
+
+        // Generate the QR code for the directions URL
+        qrcode.toDataURL(directionsUrl, (err, qrCodeDataUrl) => {
+            if (err) {
+                console.error('Error generating QR code:', err);
+                return res.status(500).send('Error generating QR code');
+            }
+
+            // Return the QR code URL to the frontend
+            res.json({ url: qrCodeDataUrl });
+        });
+
+    } catch (error) {
+        console.error('Error fetching ATM data:', error);
+        res.status(500).send('Error fetching ATM data');
+    }
+});
+
 //Data Routes (Rishikesh)
 app.get("/atmTypes", atmTypes.getATMTransactionTypes);
 app.get("/nonAtmTypes", nonAtmTypes.getNonATMTransactionTypes);
