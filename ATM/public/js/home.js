@@ -290,9 +290,12 @@ const languageMap = {
 
       // Check if the response contains a withdrawal confirmation
       if(data.response.includes("Withdrawing")){
-        setTimeout(() => {
-            window.location.href = "processing";
-        }, 2500);
+        //Get the amount varaible
+        // *********************
+        const amount = data.response.amount;
+        // *********************
+
+        withdraw(amount);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -305,3 +308,89 @@ const languageMap = {
   document.getElementById("chat-input").addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
   });
+
+
+
+// Modified withdraw function
+async function withdraw(amount) {
+    
+    const notes = calculateNotes(amount);
+
+    console.log(`Dispensing ${notes[5]} $5 notes, ${notes[10]} $10 notes, ${notes[50]} $50 notes, ${notes[100]} $100 notes.`);
+
+    // Call the backend to update ATM notes
+    const success = await updateATMNotes(notes, atmId);
+
+    if (success){
+        // Redirect to processing page
+        window.location.href = "/processing";
+    }
+}
+
+const atmId = 1;
+
+/**
+ * Calls the backend to update the ATM notes after a withdrawal.
+ * @param {Object} notes - An object containing the count of 5, 10, 50, and 100 dollar notes to withdraw.
+ * @param {number} atmId - The ID of the ATM where the withdrawal is happening.
+ */
+async function updateATMNotes(notes, atmId) {
+    try {
+        const response = await fetch("/ATM-decrease", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                atmId,
+                notes,
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            console.log("ATM notes updated successfully.");
+            // alert("Withdrawal successful!");
+            return true;
+        } else {
+            console.error("Error updating ATM notes:", result.message);
+            console.log(result.message)
+            if (result.message === "Insufficient notes available in the ATM for the withdrawal.") {                
+                // alert("Insufficient funds in the ATM for the requested withdrawal.");
+                if (confirm("Insufficient funds. Select 'Ok' to find the nearest ATM?")) {
+                    // findNearestATM(); // Runs if user clicks "OK"
+                    document.getElementById("locator-modal-button").click();
+                    console.log(123)
+                    return;
+                } 
+                else {
+                    console.log("User declined to find nearest ATM.");
+                    return false;
+                }
+
+            } else {
+                alert("Error updating ATM notes: " + result.message);
+                return false;
+            }
+        }
+    } catch (error) {
+        console.error("Error connecting to ATM API:", error);
+        alert("Error connecting to the server. Please try again later.");
+        return false;
+    }
+}
+
+
+function calculateNotes(amount) {
+    const notes = { 5: 0, 10: 0, 50: 0, 100: 0 };
+    const denominations = [100, 50, 10, 5];
+
+    for (const denom of denominations) {
+        notes[denom] = Math.floor(amount / denom);
+        amount %= denom;
+    }
+
+    return notes;
+}
+

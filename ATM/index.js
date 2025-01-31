@@ -180,14 +180,13 @@ app.post("/chat", async (req, res) => {
 You are a virtual ATM assistant. Your primary task is to help users perform banking operations, including withdrawing money, depositing funds, and providing translations.
 
 Key Rules:
-- The ATM only dispenses bills of $2, $5, $10, $50, and $100.
+- The ATM only dispenses bills of $5, $10, $50, and $100.
 - Use a stepwise approach to subtract the largest possible denomination from the requested amount until it reaches zero.
 - There is no $1 bill in the ATM.
 - Provide a clear breakdown of the denominations used, formatted as:
   $50: 0
   $10: 0
   $5: 0
-  $2: 0
 - If the requested amount cannot be fully dispensed in whole dollar bills (e.g., $37), return an error message with an explanation.
 - Always prioritize using the largest available denominations first, then move to smaller ones, ensuring that $2 bills are considered correctly when necessary.
 - Respond only to ATM-related queries and reject unrelated questions politely.
@@ -433,6 +432,10 @@ app.post('/submit-report', async (req, res) => {
 app.get("/report-page", async  (req,res) =>{
     res.sendFile(path.join(__dirname, "public", "html", "Helpbutton.html"));
 
+})
+
+app.get("/chooseWithdraw", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "Options.html"))
 })
 
 app.listen(port, async () => {
