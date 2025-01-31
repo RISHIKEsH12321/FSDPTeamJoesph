@@ -155,14 +155,28 @@ body {
 }
 
 .popup .mic-record-button {
-    margin-top: 10px;
-    cursor: pointer;
+    width: 70px; /* Increase size */
+    height: 70px; /* Keep it round */
+    background: white; /* White background */
+    border: none; /* Remove border */
+    border-radius: 50%; /* Make it fully round */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center the button horizontally */
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds subtle shadow */
+    transition: transform 0.2s ease-in-out; /* Smooth effect on click */
+}
+
+.popup .mic-record-button:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
 }
 
 .popup .mic-record-button svg {
-    width: 40px;
-    height: 40px;
-    fill: #e11a27;
+    width: 50px; /* Make the icon bigger */
+    height: 50px;
+    fill: #e11a27; /* Keep red color */
 }
 
 .popup-overlay {
@@ -175,6 +189,13 @@ body {
     display: none;
     z-index: 1;
 }
+
+canvas {
+    border: 1px solid #bbb;
+    width: 85%;
+    height: 50px;
+}
+/* Rishi's Voice Command CSS END*/
 
     
 /* Chatbot logo (circle icon) */
@@ -191,10 +212,10 @@ body {
     left: 20px;
     bottom:20px;
     z-index: 1002; /* Ensure it is above the wrapper */
-  }
+}
   
   /* Full-screen wrapper for centering the chatbot */
-  #chatbot-wrapper {
+#chatbot-wrapper {
     position: fixed;
     top: 0;
     left: 0;
@@ -206,58 +227,58 @@ body {
     background-color: rgba(0, 0, 0, 0.5); /* Optional: background dimming */
     z-index: 1001; /* Make sure the chat container is behind the logo */
     display: none; /* Hidden by default */
-  }
+}
   
   /* Chatbox Styling */
-  #chatbot-container {
+#chatbot-container {
     width: 600px;
     height: 500px;
     border: 1px solid #e11a27;
     border-radius: 10px;
     padding: 10px;
     background-color: #f9f9f9;
-  }
-  
-  
-      #messages {
-        height: 80%;
-        overflow-y: auto;
-        border-bottom: 1px solid #ddd;
-        padding: 10px;
-      }
-  
-      .message {
-        margin: 5px 0;
-      }
-  
-      .user-message {
-        text-align: right;
-        color: #007bff;
-      }
-  
-      .bot-message {
-        text-align: left;
-        color: #e11a27;
-      }
-  
-      #chat-input {
-        width: 80%;
-        padding: 10px;
-        margin-top: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-  
-      #send-btn {
-        width: 18%;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 10px;
-        cursor: pointer;
-      }
-  
-      #send-btn:hover {
-        background-color: #0056b3;
-      }
+}
+
+
+#messages {
+    height: 80%;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.message {
+    margin: 5px 0;
+}
+
+.user-message {
+    text-align: right;
+    color: #007bff;
+}
+
+.bot-message {
+    text-align: left;
+    color: #e11a27;
+}
+
+#chat-input {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#send-btn {
+    width: 18%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#send-btn:hover {
+    background-color: #0056b3;
+}
