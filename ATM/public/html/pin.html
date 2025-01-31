@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ATM PIN Entry</title>
+  <script src="../js/face-api.min.js"></script>
   <style>
     /* General styling */
     body {
@@ -37,7 +38,6 @@
       content: '←'; /* Left arrow character */
       font-size: 24px;
       color: white;
-      line-height: 1; /* Center arrow vertically */
     }
 
     /* ATM Container */
@@ -82,10 +82,41 @@
       color: #777;
       margin-top: 20px;
     }
+
+    /* Camera Preview */
+    .camera-preview {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 150px;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #camera {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Warning */
+    .warning {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background: #ff4444;
+      color: white;
+      font-size: 14px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
   </style>
 </head>
 <body>
-
   <!-- Back Button -->
   <div class="back-button" onclick="goBack()"></div>
 
@@ -108,70 +139,88 @@
     <p class="footer-text">Secured by OCBC</p>
   </div>
 
-  <!-- JavaScript for navigation -->
+  <!-- Warning Message -->
+  <div class="warning" id="warning">Warning: Someone else might be looking!</div>
+
+  <!-- Camera Preview -->
+  <div class="camera-preview">
+    <video id="camera" autoplay muted></video>
+  </div>
+
+  <!-- JavaScript -->
   <script>
     // Go back to the previous page
     function goBack() {
-        window.location.href = "/index";
+      window.location.href = "/index";
     }
 
-    // Move focus to next input box
+    // Move focus to the next input box
     function moveFocus(currentInput, nextInputId) {
       if (currentInput.value.length === currentInput.maxLength) {
         document.getElementById(nextInputId).focus();
       }
     }
 
-    // Check if all PIN digits are entered and redirect
-    /* function checkPin() {
+    // Check PIN submission
+    async function checkPin() {
       const pin = [
         document.getElementById("pin1").value,
         document.getElementById("pin2").value,
         document.getElementById("pin3").value,
         document.getElementById("pin4").value,
         document.getElementById("pin5").value,
-        document.getElementById("pin6").value
-      ];
+        document.getElementById("pin6").value,
+      ].join("");
 
-      if (pin.join('').length === 6) {
-        window.location.href = "/home"; 
-      }
-    } */
-    async function checkPin() {
-    const pin = [
-      document.getElementById("pin1").value,
-      document.getElementById("pin2").value,
-      document.getElementById("pin3").value,
-      document.getElementById("pin4").value,
-      document.getElementById("pin5").value,
-      document.getElementById("pin6").value,
-    ].join("");
+      if (pin.length === 6) {
+        try {
+          const response = await fetch("/validate-pin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pin }),
+          });
 
-    if (pin.length === 6) {
-      try {
-        const response = await fetch("/validate-pin", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pin }),
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alert(result.message);
-          window.location.href = "/home"; // Redirect on success
-        } else {
-          alert(result.message);
+          const result = await response.json();
+          if (result.success) {
+            alert(result.message);
+            window.location.href = "/home"; // Redirect on success
+          } else {
+            alert(result.message);
+          }
+        } catch (error) {
+          console.error("Error validating PIN:", error);
+          alert("An error occurred. Please try again.");
         }
-      } catch (error) {
-        console.error("Error validating PIN:", error);
-        alert("An error occurred. Please try again.");
+      } else {
+        alert("Please enter a valid 6-digit PIN.");
       }
-    } else {
-      alert("Please enter a valid 6-digit PIN.");
     }
-  }
 
+    // Initialize Face Detection
+    async function initFaceDetection() {
+      await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+      const video = document.getElementById('camera');
+      const warning = document.getElementById('warning');
+
+      // Start camera
+      const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+      video.srcObject = stream;
+
+      // Detect faces
+      setInterval(async () => {
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+        if (detections.length > 1) {
+          warning.style.display = 'block';
+        } else {
+          warning.style.display = 'none';
+        }
+      }, 500);
+    }
+
+    // Initialize face detection on page load
+    window.onload = () => {
+      initFaceDetection();
+    };
   </script>
-
 </body>
 </html>
