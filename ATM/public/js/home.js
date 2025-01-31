@@ -194,38 +194,21 @@ function addMessage(content, isUser = false) {
   document.getElementById('chatbot-logo').addEventListener('click', () => {
     const chatbotWrapper = document.getElementById('chatbot-wrapper');
     // Toggle chatbox visibility
-    chatbotWrapper.style.display = (chatbotWrapper.style.display === 'none' || chatbotWrapper.style.display === '') ? 'flex' : 'none';
-  });
-  
-  /*
-  // Event listener for sending the message
-  document.getElementById('send-btn').addEventListener('click', async () => {
-    const chatInput = document.getElementById('chat-input');
-    const userInput = chatInput.value.trim();
-  
-    if (!userInput) return; // Do nothing for empty input
-  
-    // Add the user's message to the chat
-    addMessage(userInput, true);
-    chatInput.value = ''; // Clear the input field
-  
-    try {
-      // Send the user's message to the backend
-      const response = await fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: userInput }),
-      });
-  
-      const data = await response.json();
-      // Add the bot's response to the chat
-      addMessage(data.response, false);
-    } catch (error) {
-      console.error('Error:', error);
-      addMessage('Sorry, something went wrong. Please try again later.', false);
+    const isHidden = chatbotWrapper.style.display = (chatbotWrapper.style.display === 'none' || chatbotWrapper.style.display === '')
+    chatbotWrapper.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+        addMessage("Hello! Welcome to the virtual ATM assistant. I can help you for withdrawing money and translating lanaguage page.",false);
+        addMessage("Simply type \"withdraw\" with the amount to withdraw.",false);
+        addMessage("Simply type \"translate to\" with the lanaguage that you want.",false);
+    }else{
+        // If chatbot is being closed, clear all messages
+        document.getElementById('messages').innerHTML = "";
     }
+        
+        
+
+    
   });
-  */
  
   // Map language names to language codes
 const languageMap = {
@@ -289,13 +272,17 @@ const languageMap = {
       }
 
       // Check if the response contains a withdrawal confirmation
-      if(data.response.includes("Withdrawing")){
+      if(data.response.includes("Withdrawing")|| data.response.includes("Dispensing")){
         //Get the amount varaible
-        // *********************
-        const amount = data.response.amount;
-        // *********************
-
-        withdraw(amount);
+        const withdrawMatch = userInput.match(/withdraw\s+\$?(\d+)/i);
+        if (withdrawMatch) {
+            const amount = withdrawMatch[1]; // Extracted amount
+            console.log(`User wants to withdraw: $${amount}`);
+            setTimeout(() => {
+                withdraw(amount);
+            }, 2500);
+           
+        }
       }
     } catch (error) {
       console.error("Error:", error);
