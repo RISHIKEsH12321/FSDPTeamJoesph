@@ -19,7 +19,7 @@ body#helpID {
     right: 20px;
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007BFF;
+    background-color: #e11a27;
     color: white;
     border: none;
     border-radius: 5px;
@@ -27,7 +27,7 @@ body#helpID {
 }
 
 #helpButton:hover {
-    background-color: #0056b3;
+    background-color: #be1722;
 }
 
 
