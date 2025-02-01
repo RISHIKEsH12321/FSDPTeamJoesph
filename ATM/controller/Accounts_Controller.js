@@ -81,12 +81,52 @@ const validatePinController = async (req, res) => {
         message: "Internal Server Error.",
       });
     }
-  };
+};
+
+const loginController = async (req, res) => {
+  const { accountNumber, pin } = req.body;
+
+  if (!accountNumber || !pin) {
+      return res.status(400).json({
+          success: false,
+          message: "Account number and PIN are required.",
+      });
+  }
+
+  try {
+      const account = await Account.verifyAccount(accountNumber, pin);
+
+      if (account) {
+          res.status(200).json({
+              success: true,
+              message: "Login successful!",
+              data: {
+                  accountID: account.accountID,
+                  userID: account.userID,
+                  name: account.name,
+                  accountNumber: account.accountNumber,
+              },
+          });
+      } else {
+          res.status(401).json({
+              success: false,
+              message: "Invalid account number or PIN.",
+          });
+      }
+  } catch (err) {
+      console.error("Error during login:", err);
+      res.status(500).json({
+          success: false,
+          message: "Internal Server Error.",
+      });
+  }
+};
 
 
 module.exports = {
     getAccountsByUserId,
     getEmailByAccountId,
     getAccountByAccNo,
-    validatePinController
+    validatePinController,
+    loginController
 };
