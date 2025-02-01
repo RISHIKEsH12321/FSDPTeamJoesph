@@ -265,7 +265,7 @@ function voiceModulation() {
         const centerY = canvas.height / 2;
 
         // Set a threshold for the sound intensity
-        const threshold = 200; // Minimum value for bar height
+        const threshold = 150; // Minimum value for bar height
 
         // Draw the frequency data as bars
         const barWidth = (canvas.width / bufferLength) * 2.5; // Bar width
