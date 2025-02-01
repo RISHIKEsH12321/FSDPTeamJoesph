@@ -102,7 +102,7 @@
                     if (result.success) {
                         // Store the amount in session storage
                         sessionStorage.setItem("withdrawAmount", amount);
-                        alert(`PIN validated. Proceeding to withdrawal confirmation. Amount: $${amount}`);
+                        alert(`QR Code validated. Proceeding to withdrawal confirmation.\nAmount: $${amount}`);
                         window.location.href = "/confirmwithdraw"; // Redirect to confirmation page
                     } else {
                         alert("Invalid account number or PIN. Please try again.");
