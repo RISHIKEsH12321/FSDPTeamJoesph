@@ -16,6 +16,9 @@ body {
     z-index: 1000;
 }
 
+.separator{
+    margin-top: 10px;
+}
 
 #wHint{
     position: absolute;
