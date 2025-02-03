@@ -97,34 +97,35 @@ app.get('/processing', (req, res) => {
 app.get('/transferFunds', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "transferFunds.html"));
 });
-app.post("/translate", async (req, res) => {
-    console.log("Incoming request body:", req.body);
-    const { text, target_lang } = req.body; // Expecting `text` and `target_lang` in the request body
-    const apiKey = "5d05c8e3-941c-47b2-8710-ff151b0a9d19:fx"; // Replace with your actual API key
-    console.log("API Key:", apiKey); 
-    try {
-        // Make the request to DeepL API
-        const response = await axios.post(
-            "https://api-free.deepl.com/v2/translate",
-            new URLSearchParams({
-                auth_key: apiKey,
-                text: text,
-                target_lang: target_lang,
-            }).toString(),
-            {
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-            }
-        );
-
-        console.log("API response:", response.data);
-        // Send the translated text back to the client
-        res.json(response.data);
-    } catch (error) {
-        console.error("Error translating text:", error.response?.data || error.message);
-        res.status(500).send("Error occurred while translating text");
-    }
+app.post("/translate", async (req, res) => { 
+    console.log("Incoming request body:", req.body); 
+    const { text, target_lang } = req.body; // Expecting text as an array and target_lang as a string 
+    const apiKey = "5d05c8e3-941c-47b2-8710-ff151b0a9d19:fx"; // Replace with your actual API key 
+ 
+    if (!Array.isArray(text) || !target_lang) { 
+        return res.status(400).json({ error: "Invalid request format" }); 
+    } 
+ 
+    try { 
+        // Convert the array into multiple text parameters 
+        const params = new URLSearchParams({ auth_key: apiKey, target_lang }); 
+        text.forEach(t => params.append("text", t)); // Append each text separately 
+ 
+        // Make the request to DeepL API 
+        const response = await axios.post( 
+            "https://api-free.deepl.com/v2/translate", 
+            params.toString(), 
+            { 
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }, 
+            } 
+        ); 
+ 
+        console.log("API response:", response.data); 
+        res.json(response.data); // Send the translated texts back to the frontend 
+    } catch (error) { 
+        console.error("Error translating text:", error.response?.data || error.message); 
+        res.status(500).json({ error: "Error occurred while translating text" }); 
+    } 
 });
 
 app.post('/withdrawalNotification', async (req, res) => {

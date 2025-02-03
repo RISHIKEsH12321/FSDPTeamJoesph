@@ -35,21 +35,29 @@ function sleep(ms) {
 //           console.error('Error translating text:', err);
 //       });
 // }
-async function translateText(textArray, targetLang) {
-  const url = '/translate';
-
-  for (const text of textArray) {
-      try {
-          console.log("Sending request:", { text, targetLang });
-          const response = await $.post(url, { text, target_lang: targetLang });
-          console.log("Translation response:", response);
-          const translatedText = response.translations[0].text;
-          replaceText(translatedText, text);
-          await sleep(500);
-      } catch (error) {
-          console.error('Error translating text:', error);
-      }
-  }
+async function translateText(textArray, targetLang) { 
+  const url = '/translate'; 
+ 
+  try { 
+      console.log("Sending request:", { textArray, targetLang }); 
+ 
+      // Send all text elements in a single request 
+      const response = await $.post(url, { text: textArray, target_lang: targetLang }); 
+ 
+      console.log("Translation response:", response); 
+ 
+      // Ensure response format is correct before replacing text 
+      if (response.translations && response.translations.length === textArray.length) { 
+          response.translations.forEach((translation, index) => { 
+              replaceText(translation.text, textArray[index]); 
+          }); 
+      } else { 
+          console.error('Translation response mismatch:', response); 
+      } 
+ 
+  } catch (error) { 
+      console.error('Error translating text:', error); 
+  } 
 }
 
 
