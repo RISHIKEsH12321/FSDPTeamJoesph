@@ -285,3 +285,16 @@ canvas {
 #send-btn:hover {
     background-color: #0056b3;
 }
+
+#timeout-warning {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
