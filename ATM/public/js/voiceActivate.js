@@ -1,4 +1,3 @@
-/*
 const toggle_conversion = document.getElementById("toggle_conversion"); // Single button
 const convert_text = document.getElementById("convert_text");
 
@@ -7,181 +6,9 @@ const popup = document.getElementById('popup');
 const popupOverlay = document.getElementById('popup-overlay');
 const startRecordingButton = document.getElementById('start-recording');
 
-openPopupButton.addEventListener('click', () => {
-    popup.style.display = 'block';
-    popupOverlay.style.display = 'block';
-});
-
-popupOverlay.addEventListener('click', () => {
-    popup.style.display = 'none';
-    popupOverlay.style.display = 'none';
-});
-
-startRecordingButton.addEventListener('click', () => {
-    console.log('Start recording functionality triggered!');
-    // Add your recording logic here
-});
-
-let speech = false; // Control flag
-let recognition;
-let finalTranscript = ''; // Store the final transcript
-
-toggle_conversion.addEventListener('click', function() {
-    if (!speech) {
-        // Start speech recognition
-        speech = true;
-        toggle_conversion.textContent = "Stop Conversion"; // Update button text
-        window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.interimResults = true;
-        //recognition.continuous = true; // Keep listening even during pauses
-
-        finalTranscript = ''; // Reset the transcript
-
-        recognition.addEventListener('result', (e) => {
-            const interimTranscript = Array.from(e.results)
-                .map(result => result[0].transcript)
-                .join('');
-
-            convert_text.innerHTML = finalTranscript + interimTranscript;
-
-            if (e.results[0].isFinal) {
-                finalTranscript += interimTranscript + ' ';
-            }
-        });
-
-        recognition.addEventListener('end', () => {
-            if (speech) {
-                recognition.start(); // Restart automatically during speech mode
-            }
-        });
-
-        recognition.start();
-    } else {
-        // Stop speech recognition
-        speech = false;
-        toggle_conversion.textContent = "Start Conversion"; // Update button text
-        if (recognition) {
-            recognition.stop(); // Stop recognition if active
-        }
-
-        // Send the final transcript to the server
-        if (finalTranscript.trim()) {
-            fetch('/voice-chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: finalTranscript.trim() }),
-            })
-                .then(response => response.json())
-                .then(result => {
-                    console.log("Server Response:", result);
-                })
-                .catch(error => {
-                    console.error("Error sending voice input:", error);
-                });
-        }
-    }
-});
-*/
-
-
-/*
-startRecordingButton.addEventListener('click', () => {
-    if (!speech) {
-        // Start speech recognition
-        speech = true;
-        isRecording = true; // Set recording state
-        startRecordingButton.innerHTML = stopSVG; // Change to stop icon
-        console.log("Recording started...");
-        //speakText("Please Start.");
-
-        window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.interimResults = true;
-
-        finalTranscript = ''; // Reset the transcript
-
-        recognition.addEventListener('result', (e) => {
-            const interimTranscript = Array.from(e.results)
-                .map(result => result[0].transcript)
-                .join('');
-
-            // convert_text.innerHTML = finalTranscript + interimTranscript;
-
-            if (e.results[0].isFinal) {
-                finalTranscript += interimTranscript + ' ';
-            }
-        });
-
-        recognition.addEventListener('end', () => {
-            if (speech) {
-                recognition.start(); // Restart automatically during speech mode
-            }
-        });
-
-        recognition.start();
-    } else {
-        // Stop speech recognition
-        speech = false;
-        isRecording = false; // Clear recording state
-        startRecordingButton.innerHTML = startSVG; // Change to start icon
-        console.log("Recording stopped...");
-        console.log(finalTranscript.trim())
-        if (recognition) {
-            recognition.stop(); // Stop recognition if active
-        }
-
-        // Send the final transcript to the server
-        if (finalTranscript.trim()) {
-            fetch('/voice-chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: finalTranscript.trim() }),
-            })
-                .then(response => response.json())
-                .then(result => {
-                    console.log("Server Response:", result);
-                })
-                .catch(error => {
-                    console.error("Error sending voice input:", error);
-                });
-        }
-    }
-});
-
-function speakText(text) {
-    // Check if the browser supports the SpeechSynthesis API
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text); // Create an utterance
-        utterance.lang = 'en-US'; // Set the language (change as needed)
-        utterance.rate = 1; // Set the speaking rate (1 is normal speed)
-        utterance.pitch = 1; // Set the pitch (1 is normal pitch)
-        utterance.volume = 1; // Set the volume (0 to 1)
-        
-        // Speak the text
-        window.speechSynthesis.speak(utterance);
-
-        // Optional: Handle events
-        utterance.onstart = () => console.log("Speech started");
-        utterance.onend = () => console.log("Speech ended");
-        utterance.onerror = (event) => console.error("Speech error:", event.error);
-    } else {
-        console.error("Text-to-Speech not supported in this browser.");
-    }
-}
-*/
-
-const toggle_conversion = document.getElementById("toggle_conversion"); // Single button
-const convert_text = document.getElementById("convert_text");
-
-const openPopupButton = document.getElementById('open-popup');
-const popup = document.getElementById('popup');
-const popupOverlay = document.getElementById('popup-overlay');
-const startRecordingButton = document.getElementById('start-recording');
+// Get the canvas element and its context (Voice Modulation)
+const canvas = document.getElementById("soundCanvas");
+const ctx = canvas.getContext("2d");
 
 let speech = false; // Control flag for text conversion
 let isRecording = false; // State to track recording
@@ -218,8 +45,8 @@ startRecordingButton.addEventListener('click', () => {
         console.log("Speaking before starting recording...");
 
         // Speak the text first
-        //speakText("Please start speaking.");
-
+        // speakText("Please start speaking.");
+        speechSynthesis.cancel();
         // Wait for speakText to finish before starting recording
         const utterance = new SpeechSynthesisUtterance("Please start speaking.");
         utterance.lang = 'en-US';
@@ -227,7 +54,7 @@ startRecordingButton.addEventListener('click', () => {
             console.log("Speech finished. Starting recording...");
             speech = true; // Set speech to true
             startRecordingButton.innerHTML = stopSVG; // Change to stop icon
-
+            voiceModulation();
             window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.interimResults = true;
@@ -379,7 +206,6 @@ function handleServerResponse(response) {
         
         case "ReportProblem":
             openContactForm();
-            console.log("Reporting a problem is not yet implemented.");
             break;
         
         default:
@@ -401,3 +227,67 @@ function openContactForm() {
 
     contactFormModal.style.display = "block";
 }
+
+// Create a function to start the audio context and draw the visualizer
+function voiceModulation() {
+    // Initialize audio context and analyser on button click
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256; // FFT size (controls frequency data resolution)
+    const bufferLength = analyser.frequencyBinCount; // Number of frequency bins
+
+    // Create an array to store the frequency data
+    const dataArray = new Uint8Array(bufferLength);
+
+    // Set up microphone input and connect to the analyser
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            drawVisualizer(analyser, dataArray, bufferLength); // Start drawing the visualizer
+        })
+        .catch(err => {
+            console.error("Error accessing microphone: ", err);
+        });
+
+    // Function to draw the visualizer
+    function drawVisualizer(analyser, dataArray, bufferLength) {
+        // Request a new animation frame
+        requestAnimationFrame(() => drawVisualizer(analyser, dataArray, bufferLength));
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Get the frequency data
+        analyser.getByteFrequencyData(dataArray);
+
+        // Calculate the center of the canvas (the baseline)
+        const centerY = canvas.height / 2;
+
+        // Set a threshold for the sound intensity
+        const threshold = 150; // Minimum value for bar height
+
+        // Draw the frequency data as bars
+        const barWidth = (canvas.width / bufferLength) * 2.5; // Bar width
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i];
+
+            // Only draw the bar if it exceeds the threshold
+            if (barHeight > threshold) {
+                // Set the bar color (gradient effect)
+                const red = barHeight + 100 * (i / bufferLength);
+                const green = 250 * (i / bufferLength);
+                const blue = 50;
+
+                // Modulate bars above and below the baseline
+                ctx.fillStyle = `rgb(${red},${green},${blue})`;
+                ctx.fillRect(x, centerY - barHeight, barWidth, barHeight * 2); // Modulation in both directions
+            }
+
+            x += barWidth + 1; // Increment x position for next bar
+        }
+    }
+};

@@ -164,3 +164,11 @@ async function voiceActivated(){
         window.location.href = "/processing";
     }
 }
+
+async function qrWithdrawa(){
+    // Retrieve the amount from sessionStorage
+    const withdrawAmount = sessionStorage.getItem("withdrawAmount") || "0.00";
+    document.getElementById("withdrawAmount").innerText = `Amount: $${withdrawAmount}`;
+    
+    withdraw(withdrawAmount);
+}

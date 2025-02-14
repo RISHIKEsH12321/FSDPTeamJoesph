@@ -7,6 +7,15 @@
     <script src="../js/locator.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <link rel="stylesheet" href="../css/locator.css">
+
+
+    <style>
+
+canvas {
+            border: 1px solid #fff;
+        }
+
+    </style>
 </head>
 <body>
     <h1>Scan to Get Directions to the Nearest OCBC ATM</h1>
@@ -14,7 +23,7 @@
 
     <div id = "locatorModal" class="hiddenModal">
         <div class="modal-content">
-            <div id="modal-header">ATM is Out of Cash</div>
+            <div id="modal-header"></div>
             <div>
                 <p>Address:</p>
                 <p id="modal-address">ACUTAL ADDRESS</p>                
@@ -29,8 +38,83 @@
             </div>
             <div id="modal-prompt">Scan to get directions to the ATM</div>
             <div id="qr_code"></div>
-            <button id="closeBtn" onclick="closeModal()">&times;</button>
+            <button id="closeBtn" onclick="closeModal()">x</button>
         </div>
     </div>
+
+    <button onclick="speakText()">Speak</button>
+    
+    <canvas id="soundCanvas" width="600" height="400"></canvas>
+
+    <button class="mic-record-button" id="start-recording">
+        Start Recording
+    </button>
+
+    <script>
+// Get the canvas element and its context
+const canvas = document.getElementById("soundCanvas");
+const ctx = canvas.getContext("2d");
+
+// Create a function to start the audio context and draw the visualizer
+document.getElementById('start-recording').addEventListener('click', function() {
+    // Initialize audio context and analyser on button click
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256; // FFT size (controls frequency data resolution)
+    const bufferLength = analyser.frequencyBinCount; // Number of frequency bins
+
+    // Create an array to store the frequency data
+    const dataArray = new Uint8Array(bufferLength);
+
+    // Set up microphone input and connect to the analyser
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            drawVisualizer(analyser, dataArray, bufferLength); // Start drawing the visualizer
+        })
+        .catch(err => {
+            console.error("Error accessing microphone: ", err);
+        });
+
+    // Function to draw the visualizer
+    function drawVisualizer(analyser, dataArray, bufferLength) {
+        // Request a new animation frame
+        requestAnimationFrame(() => drawVisualizer(analyser, dataArray, bufferLength));
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Get the frequency data
+        analyser.getByteFrequencyData(dataArray);
+
+        // Calculate the center of the canvas (the baseline)
+        const centerY = canvas.height / 2;
+
+        // Draw the frequency data as bars
+        const barWidth = (canvas.width / bufferLength) * 2.5; // Bar width
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i];
+
+            // Set the bar color (gradient effect)
+            const red = barHeight + 100 * (i / bufferLength);
+            const green = 250 * (i / bufferLength);
+            const blue = 50;
+
+            // Modulate bars above and below the baseline
+            ctx.fillStyle = `rgb(${red},${green},${blue})`;
+            ctx.fillRect(x, centerY - barHeight, barWidth, barHeight * 2); // Modulation in both directions
+
+            x += barWidth + 1; // Increment x position for next bar
+        }
+    }
+});
+
+
+    </script>
+    
 </body>
 </html>

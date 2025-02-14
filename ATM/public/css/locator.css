@@ -24,19 +24,22 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 /* Modal Content Box */
 .modal-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Center both horizontally & vertically */
     background-color: #fff;
-    margin: 10% auto; /* Center the modal */
     padding: 20px;
     border-radius: 8px;
     width: 80%;
     max-width: 400px;
-    position: relative;
     text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
 }
 
 /* Modal Header */
@@ -56,8 +59,8 @@ p {
 /* QR Code Area */
 #qr_code {
     margin-top: 20px;
-    width: 128px;
-    height: 128px;
+    width: 200px;
+    height: 200px;
     margin: 0 auto; /* Center the QR Code */
 }
 
@@ -65,15 +68,21 @@ p {
 #closeBtn {
     background-color: #e74c3c;
     color: white;
-    font-size: 24px;
+    font-size: 18px; /* Reduced font size for a better fit */
     border: none;
     cursor: pointer;
-    padding: 10px 20px;
+    width: 42px; /* Set fixed width */
+    height: 42px; /* Set fixed height */
+    display: flex; /* Use flexbox to center the "×" */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
     border-radius: 50%;
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 18px;
+    line-height: 1; /* Ensure text stays centered */
 }
+
 
 /* Show Modal When Activated */
 .hiddenModal.show {
@@ -82,13 +91,14 @@ p {
 
 /* Modal Prompt Styling */
 #modal-prompt {
-    margin-top: 15px;
+    /* margin-top: 15px; */
+    margin-bottom: 15px;
     font-size: 1em;
     color: #555;
 }
 
 /* Address and Distance Layout */
-#modal-address, #modal-distance {
+#modal-address, #modal-distance, #modal-code {
     font-size: 1.2em;
     font-weight: bold;
 }

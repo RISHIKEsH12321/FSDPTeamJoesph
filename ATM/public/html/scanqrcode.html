@@ -24,7 +24,7 @@
             width: 100%;
             height: auto;
             border-radius: 8px;
-            border: 2px solid #007bff;
+            border: 2px solid #d50000;
         }
         #message {
             margin-bottom: 20px;
@@ -81,33 +81,35 @@
         }
 
         async function handleQRCode(qrData) {
+            const accountMatch = qrData.match(/Account:(\d+)/);
             const pinMatch = qrData.match(/PIN:(\d{6})/);
             const amountMatch = qrData.match(/Amount:(\d+)/);
 
-            if (pinMatch && amountMatch) {
+            if (accountMatch && pinMatch && amountMatch) {
+                const accountNumber = accountMatch[1];
                 const pin = pinMatch[1];
                 const amount = amountMatch[1];
 
-                // Validate the PIN using the server
+                // Validate the account number and PIN using the server
                 try {
-                    const response = await fetch("/validate-pin", {
+                    const response = await fetch("/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ pin }),
+                        body: JSON.stringify({ accountNumber, pin })
                     });
 
                     const result = await response.json();
                     if (result.success) {
                         // Store the amount in session storage
                         sessionStorage.setItem("withdrawAmount", amount);
-                        alert(`PIN validated. Proceeding to withdrawal confirmation. Amount: $${amount}`);
+                        alert(`QR Code validated. Proceeding to withdrawal confirmation.\nAmount: $${amount}`);
                         window.location.href = "/confirmwithdraw"; // Redirect to confirmation page
                     } else {
-                        alert("Invalid PIN. Please try again.");
+                        alert("Invalid account number or PIN. Please try again.");
                     }
                 } catch (error) {
-                    console.error("Error validating PIN:", error);
-                    alert("An error occurred while validating the PIN. Please try again.");
+                    console.error("Error validating account and PIN:", error);
+                    alert("An error occurred while validating the account and PIN. Please try again.");
                 }
             } else {
                 alert("Invalid QR code format.");

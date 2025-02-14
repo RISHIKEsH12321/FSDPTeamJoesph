@@ -166,3 +166,12 @@ body {
 #headerContainer3{
     padding-top: 26px;
 }
+
+#exit{
+    text-decoration: none;
+    color: #000;    
+}
+
+#exit p{
+    font-size: 20px;
+}

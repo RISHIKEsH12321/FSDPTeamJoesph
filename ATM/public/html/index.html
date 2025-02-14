@@ -17,9 +17,9 @@
 
     <!-- Button Container -->
     <div class="button-container">
-        <button class="login-button" id="fingerprint" onclick="navigateToPage('fingerprint')">Continue with Fingerprint</button>
+        <!-- <button class="login-button" id="fingerprint" onclick="navigateToPage('fingerprint')">Continue with Fingerprint</button> -->
         <button class="login-button" id="facial" onclick="navigateToPage('facial')">Continue with Facial Recognition</button>
-        <button class="login-button" id="startScan">Continue with NFC Login</button>
+        <a href="/pin"><button class="login-button" id="startScan">Insert Card</button></a>
     </div>
 
     <!-- QR Code Scan Button -->
@@ -30,6 +30,7 @@
     <br><br>
     <div id="output" style="text-align: center;"></div>
     <div id="atm-details"></div>
+    
 
     <!-- JavaScript for page navigation -->
     <script>

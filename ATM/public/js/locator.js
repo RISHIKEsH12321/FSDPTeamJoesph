@@ -94,7 +94,7 @@ function openModal(header, atm, distance){
     //Input Data
     modalHeader.textContent = header;
     modalAddress.textContent = atm.address;
-    modalDistance.textContent = Math.round(distance);
+    modalDistance.textContent = Math.round(distance) + "m";
     modalCode.textContent = atm.postalCode;
 
     //Clear QR Code
@@ -122,8 +122,8 @@ function generateQRCode(atmLat, atmLng) {
     
     var qrcode = new QRCode("qr_code", {
 	    text: mapsUrl,
-	    width: 128,
-	    height: 128,
+	    width: 200,
+	    height: 200,
 	    colorDark : "#000000",
 	    colorLight : "#ffffff",
 	    correctLevel : QRCode.CorrectLevel.H

@@ -60,11 +60,12 @@
     <h1>Confirm Withdrawal</h1>
     <p class="amount" id="withdrawAmount"></p>
     <div class="button-container">
-      <button class="btn btn-secondary confirm" onclick="confirmWithdrawal()">Confirm</button>
+      <button class="btn btn-secondary confirm" onclick="qrWithdrawa()">Confirm</button>
       <button class="btn btn-secondary cancel" onclick="cancelWithdrawal()">Cancel</button>
     </div>
   </div>
-
+  
+  <script src="../js/withdrawal.js"></script>
   <script>
     // Retrieve the amount from sessionStorage
     const withdrawAmount = sessionStorage.getItem("withdrawAmount") || "0.00";
